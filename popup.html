@@ -63,9 +63,7 @@
 
       // Show options in a new tab
       function showOptions() {
-        chrome.tabs.create({
-          url: 'options.html'
-        });
+        opera.extension.bgProcess.openOptionsTab();
       }
 
       // Converts duration to String

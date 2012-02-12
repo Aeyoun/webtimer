@@ -128,3 +128,9 @@
   // Update timer data every UPDATE_INTERVAL seconds
   setInterval(updateData, UPDATE_INTERVAL * 1000);
 }());
+
+function openOptionsTab() {
+  opera.extension.tabs.create( {
+    url: 'options.html', focused: true
+  } );
+}
