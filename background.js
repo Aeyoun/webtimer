@@ -96,46 +96,40 @@
   // Update the data
   function updateData() {
     // Only count time if Chrome has focus
-    chrome.windows.getLastFocused(function (window) {
-      if (window.focused) {
-        // Only count time if system has not been idle for 30 seconds
-        chrome.idle.queryState(30, function (state) {
-          if (state === "active") {
-            chrome.tabs.getSelected(null, function (tab) {
-              // Make sure 'today' is up-to-date
-              checkDate();
-              if (!inBlacklist(tab.url)) {
-                var domain = extractDomain(tab.url);
-                // Add domain to domain list if not already present
-                var domains = JSON.parse(widget.preferences.getItem('domains'));
-                if (!(domain in domains)) {
-                  // FIXME: Using object as hash set feels hacky
-                  domains[domain] = 1;
-                  widget.preferences.setItem('domains', JSON.stringify(domains));
-                }
-                var domain_data;
-                if (widget.preferences.getItem(domain)) {
-                  domain_data = JSON.parse(widget.preferences.getItem(domain));
-                } else {
-                  domain_data = {
-                    today: 0,
-                    all: 0
-                  };
-                }
-                domain_data.today += UPDATE_INTERVAL;
-                domain_data.all += UPDATE_INTERVAL;
-                widget.preferences.setItem(domain, JSON.stringify(domain_data));
-                // Update total time
-                var total = JSON.parse(widget.preferences.getItem('total'));
-                total.today += UPDATE_INTERVAL;
-                total.all += UPDATE_INTERVAL;
-                widget.preferences.setItem('total', JSON.stringify(total));
-              }
-            });
+    if (window.focus) {
+      if (opera.extension.tabs.getFocused() && opera.extension.tabs.getFocused().url) {
+        var tab = opera.extension.tabs.getFocused();
+        // Make sure 'today' is up-to-date
+        checkDate();
+        if (!inBlacklist(tab.url)) {
+          var domain = extractDomain(tab.url);
+          // Add domain to domain list if not already present
+          var domains = JSON.parse(widget.preferences.getItem('domains'));
+          if (!(domain in domains)) {
+            // FIXME: Using object as hash set feels hacky
+            domains[domain] = 1;
+            widget.preferences.setItem('domains', JSON.stringify(domains));
           }
-        });
+          var domain_data;
+          if (widget.preferences.getItem(domain)) {
+            domain_data = JSON.parse(widget.preferences.getItem(domain));
+          } else {
+            domain_data = {
+              today: 0,
+              all: 0
+            };
+          }
+          domain_data.today += UPDATE_INTERVAL;
+          domain_data.all += UPDATE_INTERVAL;
+          widget.preferences.setItem(domain, JSON.stringify(domain_data));
+          // Update total time
+          var total = JSON.parse(widget.preferences.getItem('total'));
+          total.today += UPDATE_INTERVAL;
+          total.all += UPDATE_INTERVAL;
+          widget.preferences.setItem('total', JSON.stringify(total));
+        }
       }
-    });
+    }
   }
   // Update timer data every UPDATE_INTERVAL seconds
   setInterval(updateData, UPDATE_INTERVAL * 1000);
