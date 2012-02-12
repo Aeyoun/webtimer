@@ -1,7 +1,9 @@
+<!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8" />
     <title>Web Timer Options</title>
-    <style type="text/css">
+    <style>
       body {
           margin: 15px;
           font-family: helvetica, arial, sans-serif;
@@ -71,8 +73,8 @@
       }
     </style>
   </head>
-  <script type="text/javascript">
-  var bg = chrome.extension.getBackgroundPage();
+  <script>
+  var bg = opera.extension.bgProcess;
 
   // Saves options to localStorage.
   function save_options() {
