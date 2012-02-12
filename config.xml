@@ -12,4 +12,5 @@
   <preference name="domains" value="{}" />
   <preference name="total" value="{&quot;today&quot;:0,&quot;all&quot;:0}" />
   <preference name="other" value="{&quot;today&quot;:0,&quot;all&quot;:0}" />
+  <access origin="https://google.com" subdomains="true" />
 </widget>
