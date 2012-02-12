@@ -6,4 +6,10 @@
   <author href="http://web.daniel.priv.no/">Daniel Aleksandersen</author>
   <icon src="icon_128.png" height="128" width="128" />
   <icon src="icon_19.png" height="19" width="19" />
+  <preference name="num_days" value="1" />
+  <preference name="chart_limit" value="7" />
+  <preference name="blacklist" value="[&quot;example.com&quot;]" />
+  <preference name="domains" value="{}" />
+  <preference name="total" value="{&quot;today&quot;:0,&quot;all&quot;:0}" />
+  <preference name="other" value="{&quot;today&quot;:0,&quot;all&quot;:0}" />
 </widget>

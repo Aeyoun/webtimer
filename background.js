@@ -24,42 +24,11 @@
   };
   
   setDefaults();
-  // Set default settings
   function setDefaults() {
-    // Set blacklist
-    if (!localStorage["blacklist"]) {
-      localStorage["blacklist"] = JSON.stringify(["example.com"]);
-    }
-    // Set number of days Web Timer has been used
-    if (!localStorage["num_days"]) {
-      localStorage["num_days"] = 1;
-    }
     // Set date
-    if (!localStorage["date"]) {
-      localStorage["date"] = new Date().toLocaleDateString();
-    }
-    // Set domains seen before
-    if (!localStorage["domains"]) {
-      localStorage["domains"] = JSON.stringify({});
-    }
-    // Set total time spent
-    if (!localStorage["total"]) {
-      localStorage["total"] = JSON.stringify({
-        today: 0,
-        all: 0
-      });
-    }
-    // Limit how many sites the chart shows
-    if (!localStorage["chart_limit"]) {
-      localStorage["chart_limit"] = 7;
-    }
-    // Set "other" category
-    // NOTE: other.today is not currently used
-    if (!localStorage["other"]) {
-      localStorage["other"] = JSON.stringify({
-        today: 0,
-        all: 0
-      });
+    if (!widget.preferences.getItem('date'))
+    {
+      widget.preferences.setItem('date', new Date().toLocaleDateString());
     }
   }
   
