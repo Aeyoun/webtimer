@@ -49,7 +49,12 @@
     <!--Load the AJAX API-->
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
-      var bg = chrome.extension.getBackgroundPage();
+        // Types to view data
+      var TYPE = {
+        today: "today",
+        average: "average",
+        all: "all"
+      };
 
       // Load the Visualization API and the piechart package.
       google.load('visualization', '1.0', {'packages':['corechart', 'table']});
@@ -107,11 +112,11 @@
         for (var domain in domains) {
           var domain_data = JSON.parse(widget.preferences.getItem(domain));
           var numSeconds = 0;
-          if (type === bg.TYPE.today) {
+          if (type === TYPE.today) {
             numSeconds = domain_data.today;
-          } else if (type === bg.TYPE.average) {
+          } else if (type === TYPE.average) {
             numSeconds = Math.floor(domain_data.all / parseInt(widget.preferences.getItem('num_days')));
-          } else if (type === bg.TYPE.all) {
+          } else if (type === TYPE.all) {
             numSeconds = domain_data.all;
           } else {
             console.error("No such type: " + type);
@@ -151,9 +156,9 @@
         }
         // Add time in "other" category for total and average
         var other = JSON.parse(widget.preferences.getItem('other'));
-        if (type === bg.TYPE.average) {
+        if (type === TYPE.average) {
           sum += Math.floor(other.all / parseInt(widget.preferences.getItem('num_days')));
-        } else if (type === bg.TYPE.all) {
+        } else if (type === TYPE.all) {
           sum += other.all;
         }
         if (sum > 0) {
@@ -172,11 +177,11 @@
         // Add total time
         var total = JSON.parse(widget.preferences.getItem('total'));
         var numSeconds = 0;
-        if (type === bg.TYPE.today) {
+        if (type === TYPE.today) {
           numSeconds = total.today;
-        } else if (type === bg.TYPE.average) {
+        } else if (type === TYPE.average) {
           numSeconds = Math.floor(total.all / parseInt(widget.preferences.getItem('num_days')));
-        } else if (type === bg.TYPE.all) {
+        } else if (type === TYPE.all) {
           numSeconds = total.all;
         } else {
           console.error("No such type: " + type);
@@ -200,7 +205,7 @@
 
       function showToday() {
         // Draw chart and table
-        show(bg.TYPE.today);
+        show(TYPE.today);
         // Update nav
         document.getElementById('today').className = 'active';
         document.getElementById('average').className = '';
@@ -209,7 +214,7 @@
 
       function showAverage() {
         // Draw chart and table
-        show(bg.TYPE.average);
+        show(TYPE.average);
         // Update nav
         document.getElementById('today').className = '';
         document.getElementById('average').className = 'active';
@@ -218,7 +223,7 @@
 
       function showAllTime() {
         // Draw chart and table
-        show(bg.TYPE.all);
+        show(TYPE.all);
         // Update nav
         document.getElementById('today').className = '';
         document.getElementById('average').className = '';
@@ -255,11 +260,11 @@
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Domain');
         var timeDesc;
-        if (type === bg.TYPE.today) {
+        if (type === TYPE.today) {
           timeDesc = "Today";
-        } else if (type === bg.TYPE.average) {
+        } else if (type === TYPE.average) {
           timeDesc = "Daily Average";
-        } else if (type === bg.TYPE.all) {
+        } else if (type === TYPE.all) {
           timeDesc = "Over " + widget.preferences.getItem('num_days') + ' Days';
         } else {
           console.error("No such type: " + type);
