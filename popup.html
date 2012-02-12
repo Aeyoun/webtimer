@@ -102,15 +102,15 @@
       // Show the data for the time period indicated by addon
       function show(type) {
         // Get the domain data
-        var domains = JSON.parse(localStorage["domains"]);
+        var domains = JSON.parse(widget.preferences.getItem('domains'));
         var chart_data = [];
         for (var domain in domains) {
-          var domain_data = JSON.parse(localStorage[domain]);
+          var domain_data = JSON.parse(widget.preferences.getItem(domain));
           var numSeconds = 0;
           if (type === bg.TYPE.today) {
             numSeconds = domain_data.today;
           } else if (type === bg.TYPE.average) {
-            numSeconds = Math.floor(domain_data.all / parseInt(localStorage["num_days"]));
+            numSeconds = Math.floor(domain_data.all / parseInt(widget.preferences.getItem('num_days')));
           } else if (type === bg.TYPE.all) {
             numSeconds = domain_data.all;
           } else {
@@ -141,7 +141,7 @@
 
         // Limit chart data
         var limited_data = [];
-        var chart_limit = parseInt(localStorage["chart_limit"]);
+        var chart_limit = parseInt(widget.preferences.getItem('chart_limit'));
         for (var i = 0; i < chart_limit && i < chart_data.length; i++) {
           limited_data.push(chart_data[i]);
         }
@@ -150,9 +150,9 @@
           sum += chart_data[i][1].v;
         }
         // Add time in "other" category for total and average
-        var other = JSON.parse(localStorage["other"]);
+        var other = JSON.parse(widget.preferences.getItem('other'));
         if (type === bg.TYPE.average) {
-          sum += Math.floor(other.all / parseInt(localStorage["num_days"]));
+          sum += Math.floor(other.all / parseInt(widget.preferences.getItem('num_days')));
         } else if (type === bg.TYPE.all) {
           sum += other.all;
         }
@@ -170,12 +170,12 @@
         drawChart(limited_data);
 
         // Add total time
-        var total = JSON.parse(localStorage["total"]);
+        var total = JSON.parse(widget.preferences.getItem('total'));
         var numSeconds = 0;
         if (type === bg.TYPE.today) {
           numSeconds = total.today;
         } else if (type === bg.TYPE.average) {
-          numSeconds = Math.floor(total.all / parseInt(localStorage["num_days"]));
+          numSeconds = Math.floor(total.all / parseInt(widget.preferences.getItem('num_days')));
         } else if (type === bg.TYPE.all) {
           numSeconds = total.all;
         } else {
@@ -260,7 +260,7 @@
         } else if (type === bg.TYPE.average) {
           timeDesc = "Daily Average";
         } else if (type === bg.TYPE.all) {
-          timeDesc = "Over " + localStorage["num_days"] + " Days";
+          timeDesc = "Over " + widget.preferences.getItem('num_days') + ' Days';
         } else {
           console.error("No such type: " + type);
         }
