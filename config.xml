@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" id="https://github.com/zcode/webtimer" version="1.2.12" xml:lang="en" defaultlocale="en">
+  <name short="Web Timer">Web Timer</name>
+  <description xml:lang="en">Keep track of how you spend your time on the Web.</description>
+  <license href="http://www.opensource.org/licenses/mit-license.php" xml:lang="en">Licensed under the MIT license. Attribution encouraged.</license>
+  <author href="http://web.daniel.priv.no/">Daniel Aleksandersen</author>
+  <icon src="icon_128.png" height="128" width="128" />
+  <icon src="icon_19.png" height="19" width="19" />
+</widget>
