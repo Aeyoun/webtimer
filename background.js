@@ -34,7 +34,7 @@
       var domain_data = JSON.parse(widget.preferences.getItem(domain));
       if (domain_data.all < threshold) {
         other.all += domain_data.all;
-        delete widget.preferences(domain);
+        widget.preferences.setItem(domain, '');
         delete domains[domain];
       }
     }
