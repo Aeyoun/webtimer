@@ -16,12 +16,6 @@
   
   // Interval (in seconds) to update timer
   var UPDATE_INTERVAL = 3;
-  // Types to view data
-  var TYPE = {
-    today: "today",
-    average: "average",
-    all: "all"
-  };
   
   setDefaults();
   function setDefaults() {
