@@ -8,31 +8,40 @@
           font-family: helvetica, arial, sans-serif;
           font-size: 13px;
       }
-      #nav {
-          float: right;
+      nav {
+          display:block;
+      }
+      #close {
+        float:right;
+      }
+      #options {
+        float:left;
+      }
+      .navgraph {
+        text-align:center;
       }
       a {
           text-decoration: none;
           color: black;
+          cursor:pointer;
       }
-      a:focus {
-          outline: none;
-      }
-      #options {
+      #options a, #close a {
           font-weight: bold;
-          font-size: 10px;
       }
-      #options:hover {
+      #options a:hover {
           text-decoration: underline;
       }
+      .navgraph a { padding: 4px 6px; border:1px solid transparent;border-radius:10px;}
+      .navgraph a:hover { border: 1px dashed #585858; margin:0;}
       #data {
           margin-top: 10px;
       }
       #table_div {
           margin-top: 15px;
       }
-      .active {
-          font-weight: bold;
+      .active, .active:hover {
+          border: 1px solid #585858 !important;
+          cursor:default;
       }
       #nodata {
           display: none;
@@ -48,6 +57,18 @@
     <!--Load the AJAX API-->
     <script src="https://www.google.com/jsapi"></script>
     <script>
+    
+        window.addEventListener('DOMContentLoaded', function()
+        {
+          if (~navigator.userAgent.indexOf('Mac'))
+          {
+            opera.postError('Mac');
+            document.getElementById('options').style.cssFloat = 'right';
+            document.getElementById('close').style.cssFloat = 'left';
+          }
+        }, false);
+    
+    
         // Types to view data
       var TYPE = {
         today: "today",
@@ -280,16 +301,21 @@
   </head>
 
   <body>
-    <div id="nav">
-      <a id="today" onclick="showToday()" href="#">Today</a>
-      &nbsp;|&nbsp;
-      <a id="average" onclick="showAverage()" href="#">Average</a>
-      &nbsp;|&nbsp;
-      <a id="all" onclick="showAllTime()" href="#">All Time</a>
-    </div>
-    <a id="options" onclick="showOptions()" href="#">Options</a>
+    <nav>
+      <div id="close">
+        <a onclick="window.close()" href="#">Close</a>
+      </div>
+      <div id="options">
+        <a onclick="showOptions()" href="#">Options</a>
+      </div>
+      <div class="navgraph">
+        <a id="today" onclick="showToday()" href="#">Today</a>
+        <a id="average" onclick="showAverage()" href="#">Average</a>
+        <a id="all" onclick="showAllTime()" href="#">All Time</a>
+      </div>
+    </nav>
     <div id="data">
-      <span id="nodata">Start browsing to collect usage data.</span>
+      <span id="nodata">Start browsing to collect usage data. Check the extension’s privacy settings if no data is recorded.</span>
       <div id="chart_div"></div>
       <div id="table_div"></div>
     </div>
