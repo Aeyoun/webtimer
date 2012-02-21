@@ -62,8 +62,9 @@
           height: 15em;
           width: 25em;
       }
-      #footer {
+      footer {
           margin: 10px;
+          display:block;
       }
       #status {
           margin-left: 10px;
@@ -161,10 +162,6 @@
       <h1>Web Timer Options</h1>
       <div id="info">
         <span>
-          Love Web Timer? <a target="_blank" href="https://chrome.google.com/webstore/detail/ggnjbdfgigejghknieofeahaknkjafim/reviews">Leave a review</a>!
-        </span>
-        <br />
-        <span>
           Report <a href="https://github.com/zcode/webtimer/issues" title="Issue database and reporting on Github">problems</a> and get the <a href="https://github.com/zcode/webtimer" title="Open source (MIT) license">source code</a> on Github.
         </span>
       </div>
@@ -201,10 +198,14 @@
             <td id="storage-description" class="description">There is no way to recover your data once you delete it.</td>
         </tbody>
       </table>
-    </div>
-    <div id="footer">
-      <button onclick="save_options()">Save</button>
+      <button onclick="window.close()">Close</button>
+      <button onclick="save_options()" style="font-weight:bold;">Save</button>
       <span id="status"></span>
     </div>
+    <footer>
+      Extension for Opera – Copyright 2012 <a href="http://www.daniel.priv.no">Daniel Aleksandersen.</a>
+      Extension for Google Chrome – Copyright 2011–2012 <a href="http://dskang.com">Dan Kang.</a>
+      Data graphs powered by Google.
+    </footer>
   </body>
 </html>
