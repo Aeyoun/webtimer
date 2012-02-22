@@ -1,8 +1,8 @@
 all: dist
 
 extension = config.xml index.html options.html popup.html\
-            background.js includes/*.js \
-            icon_*.png \
+            scripts/*.js includes/*.js \
+            icon_*.png styles/*.css \
             LICENSE
 
 sysexcludes = '.DS_Store' '__MACOSX' \
