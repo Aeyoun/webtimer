@@ -1,0 +1,48 @@
+body {
+  font-family:Helvetica, Arial, sans-serif;
+  font-size:13px;
+}
+nav {
+  display:block;
+}
+#close {
+  float:right;
+}
+#options {
+  float:left;
+}
+.navgraph {
+  text-align:center;
+}
+a {
+  text-decoration:none;
+  color:black;
+  cursor:pointer;
+}
+#options a, #close a {
+  font-weight:bold;
+}
+#options a:hover {
+  text-decoration:underline;
+}
+.navgraph a { padding:4px 6px; border:1px solid transparent;border-radius:10px;}
+.navgraph a:hover { border:1px dashed #585858; margin:0;}
+#data {
+  margin-top:10px;
+}
+#table_div {
+  margin-top:15px;
+}
+.active, .active:hover {
+  border:1px solid #585858 !important;
+  cursor:default;
+}
+#nodata {
+  display:none;
+  color:red;
+  font-weight:bold;
+}
+#nodata a {
+  text-decoration:underline;
+  color:red;
+}
