@@ -60,9 +60,8 @@
     
         window.addEventListener('DOMContentLoaded', function()
         {
-          if (~navigator.userAgent.indexOf('Mac'))
+          if (~navigator.platform.indexOf('Mac'))
           {
-            opera.postError('Mac');
             document.getElementById('options').style.cssFloat = 'right';
             document.getElementById('close').style.cssFloat = 'left';
           }
