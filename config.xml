@@ -5,7 +5,7 @@
   <license href="http://www.opensource.org/licenses/mit-license.php" xml:lang="en">Licensed under the MIT license. Attribution encouraged.</license>
   <author href="http://web.daniel.priv.no/">Daniel Aleksandersen</author>
   <icon src="icon_128.png" height="128" width="128" />
-  <icon src="icon_19.png" height="19" width="19" />
+  <icon src="ToolbarIcon.png" height="18" width="18" />
   <preference name="num_days" value="1" />
   <preference name="chart_limit" value="7" />
   <preference name="blacklist" value="[&quot;example.com&quot;]" />
