@@ -4,7 +4,7 @@
   currentTabURL,
   toolbarButtonProperties = {
     disabled: false,
-    icon: 'icon_19.png',
+    icon: 'ToolbarIcon.png',
     title: 'Web Timer',
     popup: {
       href: 'popup.html', 
