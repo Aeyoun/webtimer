@@ -27,6 +27,12 @@
     {
       opera.extension.windows.addEventListener(windowEvents[event], restartUserIdleMonitor, false);
     }
+    opera.extension.addEventListener('message', function(event) {
+      if (event.data == 'userScrolled')
+      {
+        restartUserIdleMonitor();
+      }
+    }, false);
   }());
 
   function checkCurrentTabURLChange()
