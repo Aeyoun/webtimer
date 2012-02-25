@@ -13,4 +13,5 @@
   <preference name="total" value="{&quot;today&quot;:0,&quot;all&quot;:0}" />
   <preference name="other" value="{&quot;today&quot;:0,&quot;all&quot;:0}" />
   <access origin="https://www.google.com" subdomains="false" />
+  <access origin="https://ajax.googleapis.com" subdomains="false" />
 </widget>
