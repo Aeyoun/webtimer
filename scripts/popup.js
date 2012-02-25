@@ -13,7 +13,8 @@ var TYPE = {
   today: "today",
   average: "average",
   all: "all"
-};
+},
+mode = TYPE.today;
 
 // Load the Visualization API and the piechart package.
 google.load('visualization', '1.0', {'packages':['corechart', 'table']});
@@ -194,34 +195,33 @@ function show(type)
   drawTable(limited_data, type);
 }
 
-function showToday()
+function updateNav(type)
 {
-  // Draw chart and table
-  show(TYPE.today);
-  // Update nav
-  document.getElementById('today').className = 'active';
+  document.getElementById('today').className = '';
   document.getElementById('average').className = '';
   document.getElementById('all').className = '';
+  document.getElementById(type).className = 'active';
+}
+
+function showToday()
+{
+  mode = TYPE.today;
+  show(TYPE.today);
+  updateNav(TYPE.today);
 }
 
 function showAverage()
 {
-  // Draw chart and table
+  mode = TYPE.average;
   show(TYPE.average);
-  // Update nav
-  document.getElementById('today').className = '';
-  document.getElementById('average').className = 'active';
-  document.getElementById('all').className = '';
+  updateNav(TYPE.average);
 }
 
 function showAllTime()
 {
-  // Draw chart and table
+  mode = TYPE.all;
   show(TYPE.all);
-  // Update nav
-  document.getElementById('today').className = '';
-  document.getElementById('average').className = '';
-  document.getElementById('all').className = 'active';
+  updateNav(TYPE.all);
 }
 
 // Callback that creates and populates a data table, 
