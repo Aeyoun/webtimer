@@ -2,9 +2,10 @@
   var userSnoozing = false,
   userSnoozeTimer,
   currentTabURL,
+  toolbarIcon = ((~window.navigator.platform.indexOf('Mac')) ? 'ToolbarIcon.png' : 'ToolbarIcon-Win.png'),
   toolbarButtonProperties = {
     disabled: false,
-    icon: 'ToolbarIcon.png',
+    icon: toolbarIcon,
     title: 'Web Timer',
     popup: {
       href: 'popup.html', 
