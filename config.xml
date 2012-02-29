@@ -4,7 +4,7 @@
   <description xml:lang="en">Keep track of how you spend your time on the Web.</description>
   <license href="http://www.opensource.org/licenses/mit-license.php" xml:lang="en">Licensed under the MIT license. Attribution encouraged.</license>
   <author href="http://web.daniel.priv.no/">Daniel Aleksandersen</author>
-  <icon src="icon_128.png" height="128" width="128" />
+  <icon src="icon_64.png" height="64" width="64" />
   <icon src="ToolbarIcon.png" height="18" width="18" />
   <preference name="num_days" value="1" />
   <preference name="chart_limit" value="7" />
