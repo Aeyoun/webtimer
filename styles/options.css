@@ -21,8 +21,7 @@ body {
     padding-left:75px;
     padding-top:30px;
     background:url('../icon_64.png') no-repeat;
-    background-size:50px;
-    background-position:1px 18px;
+    background-position:1px 8px;
 }
 #settings {
     margin:6px 6px 0 6px;
