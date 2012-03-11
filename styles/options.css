@@ -7,13 +7,6 @@ body {
     padding:1em;
     padding-bottom:2em;
 }
-#info {
-    float:right;
-}
-#info span {
-    margin-bottom:10px;
-    float:right;
-}
 #header h1 {
     display:inline;
     font-size:156%;
