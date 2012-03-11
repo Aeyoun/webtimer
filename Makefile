@@ -1,8 +1,8 @@
 all: dist
 
-extension = config.xml index.html options.html popup.html \
+extension = config.xml webtimer.html options.html popup.html \
             scripts/*.js includes/*.js \
-            icon_*.png ToolbarIcon.png ToolbarIcon-Win.png styles/*.css \
+            icon_64.png ToolbarIcon.png ToolbarIcon-Win.png styles/*.css \
             COPYING
 
 sysexcludes = '.DS_Store' '__MACOSX' \
