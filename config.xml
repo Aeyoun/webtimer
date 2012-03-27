@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<widget xmlns="http://www.w3.org/ns/widgets" id="https://github.com/zcode/webtimer" version="2.0" xml:lang="en" defaultlocale="en">
+<widget xmlns="http://www.w3.org/ns/widgets" id="https://github.com/zcode/webtimer" version="2.01" xml:lang="en" defaultlocale="en">
   <content src="webtimer.html" type="text/html" />
   <name short="Web Timer">Web Timer</name>
   <description xml:lang="en">Keep track of how you spend your time on the Web.</description>
