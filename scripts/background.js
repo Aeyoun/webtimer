@@ -90,14 +90,22 @@
     var saved_day = widget.preferences.getItem('date');
     if (saved_day !== todayStr)
     {
-      // Reset today's data
+      // Reset today’s data and delete empty records
       var domains = JSON.parse(widget.preferences.getItem('domains'));
       for (var domain in domains)
       {
-        var domain_data = JSON.parse(widget.preferences.getItem(domain));
-        domain_data.today = 0;
-        widget.preferences.setItem(domain, JSON.stringify(domain_data));
+        var domain_data = widget.preferences.getItem(domain);
+        if (domain_data == '' || domain_data == undefined) {
+          delete domains[domain];
+          widget.preferences.removeItem(domain);
+        } else {
+          var domain_data = JSON.parse(domain_data);
+          domain_data.today = 0;
+          widget.preferences.setItem(domain, JSON.stringify(domain_data));
+        }
       }
+      widget.preferences.setItem('domains', JSON.stringify(domains));
+
       // Reset total for today
       var total = JSON.parse(widget.preferences.getItem('total'));
       total.today = 0;
