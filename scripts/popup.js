@@ -78,35 +78,42 @@ function show(type)
   chart_data = [];
   for (var domain in domains)
   {
-    var domain_data = JSON.parse(widget.preferences.getItem(domain)),
-    numSeconds = 0;
-    if (type === TYPE.today)
-    {
-      numSeconds = domain_data.today;
-    }
-    else if (type === TYPE.average)
-    {
-      numSeconds = Math.floor(domain_data.all / parseInt(widget.preferences.getItem('num_days')));
-    }
-    else if (type === TYPE.all)
-    {
-      numSeconds = domain_data.all;
-    }
-    else
-    {
-      console.error("No such type: " + type);
-    }
-    if (numSeconds > 0)
-    {
-      chart_data.push([domain, {
-        v: numSeconds,
-        f: timeString(numSeconds),
-        p: {
-          style: "text-align: left; white-space: normal;"
-        }
-      }]);
+    var domain_data = widget.preferences.getItem(domain);
+    if (domain_data == '' || domain_data == undefined) {
+      delete domains[domain];
+      widget.preferences.removeItem(domain);
+    } else {
+      var domain_data = JSON.parse(domain_data),
+      numSeconds = 0;
+      if (type === TYPE.today)
+      {
+        numSeconds = domain_data.today;
+      }
+      else if (type === TYPE.average)
+      {
+        numSeconds = Math.floor(domain_data.all / parseInt(widget.preferences.getItem('num_days')));
+      }
+      else if (type === TYPE.all)
+      {
+        numSeconds = domain_data.all;
+      }
+      else
+      {
+        console.error("No such type: " + type);
+      }
+      if (numSeconds > 0)
+      {
+        chart_data.push([domain, {
+          v: numSeconds,
+          f: timeString(numSeconds),
+          p: {
+            style: "text-align: left; white-space: normal;"
+          }
+        }]);
+      }
     }
   }
+  widget.preferences.setItem('domains', JSON.stringify(domains));
 
   // Display help message if no data
   if (chart_data.length === 0)
