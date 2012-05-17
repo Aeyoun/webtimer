@@ -127,8 +127,8 @@
       var total = JSON.parse(widget.preferences.getItem('total'));
       total.today = 0;
       widget.preferences.setItem('total', JSON.stringify(total));
-      // Combine entries that are not part of top 300 sites
-      combineEntries(300);
+      // Combine entries that are not part of top 500 sites
+      combineEntries(500);
       // Keep track of number of days web timer has been used
       widget.preferences.setItem('num_days', parseInt(widget.preferences.getItem('num_days')) + 1);
       // Update date
