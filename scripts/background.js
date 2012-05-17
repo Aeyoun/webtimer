@@ -64,21 +64,38 @@
     }
   }());
   
-  // Add sites with under threshold seconds of total use to "other" category
+  // Add sites which are not in the top threshold sites to "other" category
+  // WARNING: Setting the threshold too low will schew the data set
+  // so that it will favor sites that already have a lot of time but
+  // trash the ones that are visited frequently for short periods of time
   function combineEntries(threshold)
   {
     var domains = JSON.parse(widget.preferences.getItem('domains'));
     var other = JSON.parse(widget.preferences.getItem('other'));
+    // Don't do anything if there are less than threshold domains
+    if (Object.keys(domains).length <= threshold) {
+      return;
+    }
+    // Sort the domains by decreasing "all" time
+    var data = [];
     for (var domain in domains)
     {
       var domain_data = JSON.parse(widget.preferences.getItem(domain));
-      if (domain_data.all < threshold)
-      {
-        other.all += domain_data.all;
-        widget.preferences.setItem(domain, '');
-        delete domains[domain];
-      }
+      data.push({
+        domain: domain,
+        all: domain_data.all
+      });
     }
+    data.sort(function (a, b) {
+      return b.all - a.all;
+    });
+    // Delete data after top threshold and add it to other
+    for (var i = threshold; i < data.length; i++) {
+      other.all += data[i].all;
+      var domain = data[i].domain;
+      delete widget.preferences.removeItem(domain);
+      delete domains[domain];
+      }
     widget.preferences.setItem('other', JSON.stringify(other));
     widget.preferences.setItem('domains', JSON.stringify(domains));
   }
@@ -110,8 +127,8 @@
       var total = JSON.parse(widget.preferences.getItem('total'));
       total.today = 0;
       widget.preferences.setItem('total', JSON.stringify(total));
-      // Combine entries with total time less than a minute
-      combineEntries(60);
+      // Combine entries that are not part of top 300 sites
+      combineEntries(300);
       // Keep track of number of days web timer has been used
       widget.preferences.setItem('num_days', parseInt(widget.preferences.getItem('num_days')) + 1);
       // Update date
