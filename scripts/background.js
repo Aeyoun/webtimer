@@ -166,10 +166,16 @@
   {
     if (opera.extension.tabs.getFocused() && opera.extension.tabs.getFocused().url)
     {
+      if (window === undefined) {
+        return;
+      }
       checkCurrentTabURLChange();
       if (!userSnoozing)
       {
         var tab = opera.extension.tabs.getFocused();
+        if (tab === undefined) {
+          return;
+        }
         // Make sure 'today' is up-to-date
         checkDate();
         if (!inBlacklist(tab.url))
