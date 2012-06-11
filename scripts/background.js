@@ -53,7 +53,8 @@
   }
 
   // Interval (in seconds) to update timer
-  var UPDATE_INTERVAL = 3;
+  var UPDATE_INTERVAL = 3,
+    THRESHOLD = 500;
   
   (function setDate()
   {
@@ -68,12 +69,12 @@
   // WARNING: Setting the threshold too low will schew the data set
   // so that it will favor sites that already have a lot of time but
   // trash the ones that are visited frequently for short periods of time
-  function combineEntries(threshold)
+  function combineEntries()
   {
     var domains = JSON.parse(widget.preferences.getItem('domains'));
     var other = JSON.parse(widget.preferences.getItem('other'));
     // Don't do anything if there are less than threshold domains
-    if (Object.keys(domains).length <= threshold) {
+    if (Object.keys(domains).length <= THRESHOLD) {
       return;
     }
     // Sort the domains by decreasing "all" time
@@ -90,7 +91,7 @@
       return b.all - a.all;
     });
     // Delete data after top threshold and add it to other
-    for (var i = threshold; i < data.length; i++) {
+    for (var i = THRESHOLD; i < data.length; i++) {
       other.all += data[i].all;
       var domain = data[i].domain;
       delete widget.preferences.removeItem(domain);
@@ -127,8 +128,8 @@
       var total = JSON.parse(widget.preferences.getItem('total'));
       total.today = 0;
       widget.preferences.setItem('total', JSON.stringify(total));
-      // Combine entries that are not part of top 500 sites
-      combineEntries(500);
+      // Combine entries that are not part of top sites as set in THREASHOLD
+      combineEntries();
       // Keep track of number of days web timer has been used
       widget.preferences.setItem('num_days', parseInt(widget.preferences.getItem('num_days')) + 1);
       // Update date
