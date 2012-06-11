@@ -216,11 +216,9 @@
   }
   // Update timer data every UPDATE_INTERVAL seconds
   setInterval(recordData, UPDATE_INTERVAL * 1000);
-}());
 
-function openOptionsTab()
-{
-  opera.extension.tabs.create( {
-    url: 'options.html', focused: true
-  } );
-}
+  window.openOptionsTab = function () {
+    opera.extension.tabs.create( {
+      url: 'options.html', focused: true
+     } );
+}}());
