@@ -207,7 +207,9 @@
             }
           }
           var domain_data;
-          if (isJson(widget.preferences.getItem(domain)))
+          opera.postError(widget.preferences.getItem(domain));
+          opera.postError(isJson(widget.preferences.getItem(domain)));
+          if (widget.preferences.getItem(domain))
           {
             domain_data = JSON.parse(widget.preferences.getItem(domain));
           }
