@@ -172,6 +172,17 @@
     return false;
   }
 
+  // Read in domain from Storage as JSON or (re)create
+  function readDomainData(domain) {
+    if (isJson(widget.preferences.getItem(domain))) {
+      return JSON.parse(widget.preferences.getItem(domain))
+    } else {
+      return {
+        today: 0,
+        all: 0
+      };
+  }}
+
   // Update the data
   function recordData()
   {
@@ -206,19 +217,7 @@
               widget.preferences.setItem('domains', JSON.stringify(domains));
             }
           }
-          // Read in domain from Storage as JSON or (re)create
-          var domain_data;
-          if (isJson(widget.preferences.getItem(domain)))
-          {
-            domain_data = JSON.parse(widget.preferences.getItem(domain));
-          }
-          else
-          {
-            domain_data = {
-              today: 0,
-              all: 0
-            };
-          }
+          var domain_data = readDomainData(domain);
           domain_data.today += UPDATE_INTERVAL;
           domain_data.all += UPDATE_INTERVAL;
           widget.preferences.setItem(domain, JSON.stringify(domain_data));
