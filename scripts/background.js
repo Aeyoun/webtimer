@@ -206,6 +206,7 @@
               widget.preferences.setItem('domains', JSON.stringify(domains));
             }
           }
+          // Read in domain from Storage as JSON or (re)create
           var domain_data;
           if (isJson(widget.preferences.getItem(domain)))
           {
