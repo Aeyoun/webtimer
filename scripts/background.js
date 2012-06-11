@@ -55,6 +55,15 @@
   // Interval (in seconds) to update timer
   var UPDATE_INTERVAL = 3,
     THRESHOLD = 500;
+
+  function isJson(string) {
+    try {
+      JSON.parse(string)
+    } catch (e) {
+      return false
+    }
+    return true
+  }
   
   (function setDate()
   {
@@ -181,14 +190,20 @@
         checkDate();
         if (!inBlacklist(tab.url))
         {
-          var domain = extractDomain(tab.url);
-          // Add domain to domain list if not already present
-          var domains = JSON.parse(widget.preferences.getItem('domains'));
-          if (!(domain in domains))
-          {
-            // FIXME: Using object as hash set feels hacky
-            domains[domain] = 1;
-            widget.preferences.setItem('domains', JSON.stringify(domains));
+          var domain = extractDomain(tab.url),
+            domains = widget.preferences.getItem('domains');
+          if (!isJson(domains)) {
+            return false
+          } else {
+            // Set variable to JSON
+            var domains = JSON.parse(domains);
+            // Add domain to domain list if not already present
+            if (!(domain in domains))
+            {
+              // FIXME: Using object as hash set feels hacky
+              domains[domain] = 1;
+              widget.preferences.setItem('domains', JSON.stringify(domains));
+            }
           }
           var domain_data;
           if (widget.preferences.getItem(domain))
