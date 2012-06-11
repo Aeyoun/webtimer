@@ -65,6 +65,14 @@
     }
     return true
   }
+
+  function isDomainName(string) {
+    if (/^.+?\..+?$/.test(string)) { // foo.bar[.baz]
+      return true
+    } else {
+      return false
+    }
+  }
   
   (function setDate()
   {
@@ -205,6 +213,7 @@
           var domain = extractDomain(tab.url),
             domains = widget.preferences.getItem('domains');
           if (!isJson(domains)) {
+            rebuildDomainsList()
             return false
           } else {
             // Set variable to JSON
@@ -237,4 +246,35 @@
     opera.extension.tabs.create( {
       url: 'options.html', focused: true
      } );
+  }
+
+  window.rebuildDomainsList = function () {
+    var storage_length = widget.preferences.length,
+      domains_list = { },
+      total_times = { today: 0, all: 0 },
+      corrupt_keys = Array.new;
+
+    for (var key_number = 0; key_number < storage_length; key_number++) {
+      var key = widget.preferences.key(key_number),
+        value = widget.preferences.getItem(key);
+
+      // Read domain entries and push to either domains and total_times, or corrupt key
+      if (isDomainName(key)) {
+        if (!isJson(value)) {
+          corrupt_keys.push(key)
+        } else {
+          domains_list[key] = 1
+          total_times.today += JSON.parse(value).today
+          total_times.all += JSON.parse(value).all
+    }}}
+
+    // Delete corrupt keys
+    for (var key in corrupt_keys) {
+      widget.preferences.removeKey(key)
+      opera.postError('Data recovery: corrupt entry for "' + key + '" removed.')
+    }
+
+    // Recreate data
+    widget.preferences.setItem('domains', JSON.stringify(domains_list))
+    widget.preferences.setItem('total', JSON.stringify(total_times))
 }}());
