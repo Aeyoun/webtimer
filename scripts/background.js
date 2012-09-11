@@ -2,7 +2,16 @@
   var userSnoozing = false,
   userSnoozeTimer,
   currentTabURL,
-  toolbarIcon = ((~window.navigator.platform.indexOf('Mac')) ? 'ToolbarIcon.png' : 'ToolbarIcon-Win.png'),
+  var toolbarIcon;
+  if (~window.navigator.platform.indexOf('Mac') {
+    if (window.devicePixelRatio >= 2) {
+      toolbarIcon = 'ToolbarIcon@2x.png';
+    } else {
+      toolbarIcon = 'ToolbarIcon.png';
+    }
+  } else {
+    toolbarIcon = 'ToolbarIcon-Win.png');
+  }
   toolbarButtonProperties = {
     disabled: false,
     icon: toolbarIcon,
