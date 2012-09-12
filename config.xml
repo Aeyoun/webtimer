@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<widget xmlns="http://www.w3.org/ns/widgets" id="https://github.com/zcode/webtimer" version="2.2.0" xml:lang="en" defaultlocale="en">
+<widget xmlns="http://www.w3.org/ns/widgets" id="https://github.com/zcode/webtimer" version="2.2.1" xml:lang="en" defaultlocale="en">
   <content src="webtimer.html" type="text/html" />
   <name short="Web Timer">Web Timer</name>
   <description xml:lang="en">Keep track of how you spend your time on the Web.</description>
@@ -7,6 +7,7 @@
   <author href="http://web.daniel.priv.no/">Daniel Aleksandersen</author>
   <icon src="icon_64.png" height="64" width="64" />
   <icon src="ToolbarIcon.png" height="18" width="18" />
+  <icon src="ToolbarIcon@2x.png" height="36" width="36" />
   <preference name="num_days" value="1" />
   <preference name="chart_limit" value="7" />
   <preference name="blacklist" value="[&quot;example.com&quot;]" />
