@@ -10,7 +10,7 @@
       toolbarIcon = 'ToolbarIcon.png';
     }
   } else {
-    toolbarIcon = 'ToolbarIcon-Win.png');
+    toolbarIcon = 'ToolbarIcon-Win.png';
   }
   toolbarButtonProperties = {
     disabled: false,
