@@ -16,6 +16,9 @@
       <div id="options">
         <a onclick="showOptions()" href="#">Options</a>
       </div>
+      <div id="tab-button" class="domain">
+        <a id="button-link" onclick="showTabs()" href="#">Tabs</a>
+      </div>
       <div class="navgraph">
         <a id="today" onclick="showToday()" href="#">Today</a>
         <a id="average" onclick="showAverage()" href="#">Average</a>
@@ -26,6 +29,24 @@
       <span id="nodata">Start browsing to collect usage data. Check the extension’s privacy settings if no data is recorded.</span>
       <div id="chart_div"></div>
       <div id="table_div"></div>
+    </div>
+    <div id="tabs">
+        <table id="tabtable">
+            <h3>
+                Avg. Focus Time: <span id="time-per-tab"></span>
+                Focus Switches: <span id="tab-switches"></span>
+            </h3>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Created</th>
+                    <th>Focused</th>
+                    <th>Avg. Focus</th>
+                </tr>
+            </thead>
+            <tbody id="tablebody">
+            </tbody>
+        </table>
     </div>
   </body>
 </html>

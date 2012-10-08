@@ -324,12 +324,11 @@
             tabs[id] = new Tab(tab);
         }
         var tab = opera.extension.tabs.getFocused().id;
-        activeTab = tab.url === undefined ? null : tab.id;
+        activeTab = tab.id
     }
 
     function tabCreated(e) {
-        var tab = new Tab(e.tab);
-        tabs[tab.id] = tab;
+        tabs[e.tab.id] = new Tab(e.tab);
     }
 
     function tabBlurred(e) {
@@ -338,7 +337,7 @@
 
     function tabFocused(e) {
         var tab = tabs[e.tab.id];
-        activeTab = tab.url === undefined ? null : tab.id;
+        activeTab = tab.ud
     }
 
     function tabClosed(e) {
@@ -352,8 +351,20 @@
     }
 
     function getData() {
+        var currentTabs = [];
+        var allTabs = opera.extension.tabs.getAll();
+        for(var i=0, tab; tab = allTabs[i]; i++) {
+            var tabData = tabs[tab.id];
+            currentTabs.push({
+                favicon: tab.faviconUrl,
+                title: tab.title,
+                blurCount: tabData.blurCount,
+                created: tabData.created,
+                activeTime: tabData.activeTime
+            });
+        }
         return {
-            tabs: tabs,
+            tabs: currentTabs,
             blurCount: globalBlurCount,
             activeTime: globalActiveTime
         }
@@ -366,7 +377,7 @@
 
     opera.extension.windows.onfocus = function(e) {
         var tab = e.target.getFocused().tabs.getFocused();
-        activeTab = tab.url === undefined ? null : tab.id;
+        activeTab = tab.id
     }
     opera.extension.windows.onblur = function(e) {
         if(activeTab !== null) {

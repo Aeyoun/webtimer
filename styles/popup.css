@@ -46,3 +46,58 @@ a {
   text-decoration:underline;
   color:red;
 }
+
+#tabs {
+    display: none;
+}
+
+#tab-button {
+    float: left;
+}
+
+#tabs {
+}
+
+#tabtable {
+    border: 1px solid black;
+    border-spacing: 0px;
+    border-collapse:collapse;
+    width: 100%;
+}
+
+#tabtable tbody {
+    text-align: center;
+}
+#tabtable td, #tabtable th {
+    border-left: 1px solid black;
+    margin: 0px;
+    padding: 2px 4px;
+}
+#tabtable th:first-child, #tabtable td:first-child {
+    text-align: left;
+}
+#tabtable th {
+    border-bottom: 1px solid black;
+}
+#tabtable td:first-child {
+    width: 45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+td img {
+    width: 16px;
+    height: 16px;
+    padding: 1px 5px;
+    position: relative;
+    top: 4px;
+}
+
+
+#tabs span {
+    font-style: italic;
+    font-size: 1.5em;
+}
+
+#tab-button {
+    margin-left: 0.5em;
+}

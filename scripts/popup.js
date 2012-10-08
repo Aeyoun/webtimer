@@ -289,3 +289,59 @@ function drawTable(table_data, type)
   var table = new google.visualization.Table(document.getElementById('table_div'));
   table.draw(data, options);
 }
+
+function formatAverageTime(blurCount, activeTime) {
+    if(activeTime == 0) return 0;
+    var seconds = activeTime / blurCount;
+    var mins = Math.floor(seconds / 60);
+    seconds = Math.floor(seconds - (mins * 60));
+    
+    return mins > 0 ? mins + "m, " + seconds + "s" : seconds + "s";
+}
+
+function formatCreated(date) {
+    return date.getHours() + ":" + date.getMinutes();
+}
+
+function formatTitle(title) {
+    if(title.length > 15) {
+        return title.slice(0,15) + "…";
+    }
+    else {
+        return title;
+    }
+}
+
+function showTabs() {
+    var button = document.getElementById('tab-button');
+    if(button.className !== "domain") {
+        document.getElementById('button-link').textContent = "Tabs";
+        document.getElementById('tabs').style.display = 'none';
+        document.getElementById('data').style.display = 'block';
+        document.querySelector('.navgraph').style.visibility = 'visible';
+        button.className = "domain";
+        return;
+    }
+    else {
+        document.getElementById('button-link').textContent = "Domains";
+        button.className = "tabs";
+    }
+    
+    var data = opera.extension.bgProcess.TabWatcher.getData();
+    var tableBody = document.getElementById('tablebody');
+    tableBody.innerHTML = data.tabs.map(function(tab) {
+        return "<tr><td>" + 
+            (tab.favicon !== undefined ? "<img src='" + tab.favicon + "' />" : "") +
+            formatTitle(tab.title) + "</td><td>" + 
+            formatCreated(tab.created) + "</td><td>" + 
+            tab.blurCount + " time" + (tab.blurCount == 1 ? '' : 's') +  "</td><td>" + 
+            formatAverageTime(tab.blurCount, tab.activeTime) + "</td></tr>";
+    }).join('');
+
+    document.getElementById('time-per-tab').innerHTML = formatAverageTime(data.blurCount, data.activeTime);
+    document.getElementById('tab-switches').innerHTML = data.blurCount;
+
+    document.getElementById('data').style.display = 'none';
+    document.getElementById('tabs').style.display = 'block';
+    document.querySelector('.navgraph').style.visibility = "hidden";
+}
