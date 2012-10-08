@@ -240,6 +240,7 @@
           total.today += UPDATE_INTERVAL;
           total.all += UPDATE_INTERVAL;
           widget.preferences.setItem('total', JSON.stringify(total));
+          window.TabWatcher.ping(UPDATE_INTERVAL);
         }
       }
     }
@@ -283,3 +284,100 @@
     widget.preferences.setItem('domains', JSON.stringify(domains_list))
     widget.preferences.setItem('total', JSON.stringify(total_times))
 }}());
+
+(function() 
+{
+    var tabs = [];
+    var activeTab;
+    var globalBlurCount = 0;
+    var globalActiveTime = 0;
+
+    function Tab(tab) {
+        var _id = tab.id;
+        var _created = new Date();
+        var activeTime = 0;
+        var blurCount = 0;
+
+        function blur() {
+            blurCount++;
+            globalBlurCount++;
+        }
+
+        function ping(time) {
+            activeTime += time;
+            globalActiveTime += time;
+        }
+        return {
+            get id(){return _id},
+            get created(){return _created},
+            get blurCount(){return blurCount},
+            get activeTime(){return activeTime},
+            ping: ping,
+            blur: blur
+        }
+    }
+
+    function init() {
+        var allTabs = opera.extension.tabs.getAll();
+        for(var i=0, tab; tab = allTabs[i]; i++) {
+            var id = tab.id;
+            tabs[id] = new Tab(tab);
+        }
+        var tab = opera.extension.tabs.getFocused().id;
+        activeTab = tab.url === undefined ? null : tab.id;
+    }
+
+    function tabCreated(e) {
+        var tab = new Tab(e.tab);
+        tabs[tab.id] = tab;
+    }
+
+    function tabBlurred(e) {
+        tabs[e.tab.id].blur();
+    }
+
+    function tabFocused(e) {
+        var tab = tabs[e.tab.id];
+        activeTab = tab.url === undefined ? null : tab.id;
+    }
+
+    function tabClosed(e) {
+        delete tabs[e.tab.id];
+    }
+
+    function ping(seconds) {
+        if(activeTab !== null) {
+            tabs[activeTab].ping(seconds);
+        }
+    }
+
+    function getData() {
+        return {
+            tabs: tabs,
+            blurCount: globalBlurCount,
+            activeTime: globalActiveTime
+        }
+    }
+
+    opera.extension.tabs.onfocus = tabFocused;
+    opera.extension.tabs.onblur = tabBlurred;
+    opera.extension.tabs.oncreate = tabCreated;
+    opera.extension.tabs.onclose = tabClosed;
+
+    opera.extension.windows.onfocus = function(e) {
+        var tab = e.target.getFocused().tabs.getFocused();
+        activeTab = tab.url === undefined ? null : tab.id;
+    }
+    opera.extension.windows.onblur = function(e) {
+        if(activeTab !== null) {
+            tabs[activeTab].blur();
+        }
+    }
+
+    init();
+
+    window.TabWatcher = {
+        ping: ping,
+        getData: getData
+    }
+}());
