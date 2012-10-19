@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<widget xmlns="http://www.w3.org/ns/widgets" id="https://github.com/zcode/webtimer" version="2.2.3" xml:lang="en" defaultlocale="en">
+<widget xmlns="http://www.w3.org/ns/widgets" id="https://github.com/Aeyoun/webtimer" version="2.2.3" xml:lang="en" defaultlocale="en">
   <content src="webtimer.html" type="text/html" />
   <name short="Web Timer">Web Timer</name>
   <description xml:lang="en">Keep track of how you spend your time on the Web.</description>
-  <license href="https://raw.github.com/zcode/webtimer/master/COPYING" xml:lang="en">Licensed under the MIT license.</license>
+  <license href="https://raw.github.com/Aeyoun/webtimer/master/COPYING" xml:lang="en">Licensed under the MIT license.</license>
   <author href="http://web.daniel.priv.no/">Daniel Aleksandersen</author>
   <icon src="icon-64.png" height="64" width="64" />
   <icon src="icon-64@2x.png" height="128" width="128" />
