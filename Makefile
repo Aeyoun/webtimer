@@ -2,7 +2,7 @@ all: dist
 
 extension = config.xml webtimer.html options.html popup.html \
             scripts/*.js includes/*.js \
-            icon_64.png ToolbarIcon.png ToolbarIcon@2x.png ToolbarIcon-Win.png styles/*.css \
+            icon-64.png icon-64@2x.png ToolbarIcon.png ToolbarIcon@2x.png ToolbarIcon-Win.png styles/*.css \
             COPYING
 
 sysexcludes = '.DS_Store' '__MACOSX' \
