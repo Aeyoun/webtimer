@@ -5,7 +5,8 @@
   <description xml:lang="en">Keep track of how you spend your time on the Web.</description>
   <license href="COPYING" xml:lang="en">Licensed under the MIT license.</license>
   <author href="http://web.daniel.priv.no/">Daniel Aleksandersen</author>
-  <icon src="icon_64.png" height="64" width="64" />
+  <icon src="icon-64.png" height="64" width="64" />
+  <icon src="icon-64@2x.png" height="128" width="128" />
   <icon src="ToolbarIcon.png" height="18" width="18" />
   <icon src="ToolbarIcon@2x.png" height="36" width="36" />
   <preference name="num_days" value="1" />
