@@ -91,4 +91,5 @@ function clearData()
   widget.preferences.setItem('other', '{"today":0,"all":0}');
   widget.preferences.setItem('num_days', '1');
   widget.preferences.setItem('date', new Date().toLocaleDateString())
+  opera.extension.postMessage('cleardata');
 }

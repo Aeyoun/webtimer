@@ -292,15 +292,39 @@ function drawTable(table_data, type)
 
 function formatAverageTime(blurCount, activeTime) {
     if(activeTime == 0) return 0;
-    var seconds = activeTime / blurCount;
+    var seconds = blurCount == 0 ? activeTime : activeTime / blurCount;
     var mins = Math.floor(seconds / 60);
     seconds = Math.floor(seconds - (mins * 60));
     
     return mins > 0 ? mins + "m, " + seconds + "s" : seconds + "s";
 }
 
+function averageTime(blurCount, activeTime) {
+    if(activeTime == 0) return 0;
+    var seconds = (blurCount === 0 || blurCount === undefined) ? activeTime : Math.floor(activeTime / blurCount);
+    return seconds;
+}
+
+function zeroPad(input) {
+    if(input < 10) { 
+        return '0' + input;
+    }
+    else {
+        return input;
+    }
+}
+
 function formatCreated(date) {
-    return date.getHours() + ":" + date.getMinutes();
+    var now = new Date();
+    var text;
+    if(now.getMonth() == date.getMonth() && now.getDate() == date.getDate()) {
+        text = zeroPad(date.getHours()) + ":" + zeroPad(date.getMinutes());
+    }
+    else {
+        text = date.getFullYear() + '.' + zeroPad(date.getMonth()) + '.' + zeroPad(date.getDate());
+    }
+
+    return '<time datetime="' + date.toISOString() + '">' + text + '</time>';
 }
 
 function formatTitle(title) {
@@ -312,7 +336,51 @@ function formatTitle(title) {
     }
 }
 
+function createDateList() {
+    var dates = [];
+    for(var i=0; i < 7; i++) {
+        var now = new Date();
+        var then = new Date(now.getTime() - (86400000 * i));
+        dates.unshift(then.getFullYear() +'.'+ then.getMonth() + '.' + then.getDate());
+    }
+    return dates;
+}
+
+function drawTabChart() {
+  var data = opera.extension.bgProcess.TabWatcher.getGlobalStats();
+  var dates = createDateList();
+
+  data = dates.map(function(date) {
+      return [date, data[date] ? 
+          averageTime(data[date].blur, data[date].activeTime) : 0];
+  });
+  data.unshift(["Date", "Avg. Tab Time"]);
+
+  // Create the data table.
+  var chartData = google.visualization.arrayToDataTable(data);
+
+  // Set chart options
+  var options = {
+    tooltip: {
+      text: 'percentage'
+    },
+    title: "Average Tab Time",
+    legend: {
+        position: 'none'
+    },
+    chartArea: {
+      width: 325,
+      height: 180
+    }
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var chart = new google.visualization.LineChart(document.getElementById('tabgraph'));
+  chart.draw(chartData, options);
+}
+
 function showTabs() {
+    drawTabChart();
     var button = document.getElementById('tab-button');
     if(button.className !== "domain") {
         document.getElementById('button-link').textContent = "Tabs";
@@ -331,7 +399,7 @@ function showTabs() {
     var tableBody = document.getElementById('tablebody');
     tableBody.innerHTML = data.tabs.map(function(tab) {
         return "<tr><td>" + 
-            (tab.favicon !== undefined ? "<img src='" + tab.favicon + "' />" : "") +
+            ("<img src='" + (tab.favicon || '') + "' />") +
             formatTitle(tab.title) + "</td><td>" + 
             formatCreated(tab.created) + "</td><td>" + 
             tab.blurCount + " time" + (tab.blurCount == 1 ? '' : 's') +  "</td><td>" + 

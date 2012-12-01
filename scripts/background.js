@@ -175,12 +175,14 @@
       return true;
     }
     var blacklist = JSON.parse(widget.preferences.getItem('blacklist'));
-    for (var i = 0; i < blacklist.length; i++)
-    {
-      if (url.match(blacklist[i]))
-      {
-        return true;
-      }
+    if(blacklist) {
+        for (var i = 0; i < blacklist.length; i++)
+        {
+          if (url.match(blacklist[i]))
+          {
+            return true;
+          }
+        }
     }
     return false;
   }
@@ -240,7 +242,6 @@
           total.today += UPDATE_INTERVAL;
           total.all += UPDATE_INTERVAL;
           widget.preferences.setItem('total', JSON.stringify(total));
-          window.TabWatcher.ping(UPDATE_INTERVAL);
         }
       }
     }
@@ -287,41 +288,115 @@
 
 (function() 
 {
-    var tabs = [];
+    var tabs = {};
     var activeTab;
-    var globalBlurCount = 0;
-    var globalActiveTime = 0;
+    var globalStats = {};
+
+    function getToday() {
+        var now = new Date();
+        return now.getFullYear() +'.'+ now.getMonth() + '.' + now.getDate();
+    }
+
+    function ping() {
+        var window = opera.extension.windows.getLastFocused();
+        if(window.focused) {
+            var tab = opera.extension.tabs.getSelected();
+            if(activeTab !== undefined) {
+                tabs[tab.id].ping(1);
+            }
+        }
+    }
+    setInterval(ping, 1000);
+
+    function initToday() {
+        globalStats[getToday()] = {
+            blur: 0,
+            activeTime: 0
+        }
+    }
 
     function Tab(tab) {
         var _id = tab.id;
+        var _url;
         var _created = new Date();
         var activeTime = 0;
         var blurCount = 0;
 
+        function toString() {
+            return {
+                id: _id,
+                url: _url,
+                created: _created,
+                activeTime: activeTime,
+                blurCount: blurCount
+            }
+        }
+
+        function init(created, active, blur) {
+            _created = created;
+            activeTime = active;
+            blurCount = blur;
+        }
+
         function blur() {
             blurCount++;
-            globalBlurCount++;
+
+            if(globalStats[getToday()] === undefined) {
+                initToday();
+            }
+            globalStats[getToday()].blur++;
         }
 
         function ping(time) {
             activeTime += time;
-            globalActiveTime += time;
+            if(globalStats[getToday()] === undefined) {
+                initToday();
+            }
+            globalStats[getToday()].activeTime += time;
         }
         return {
             get id(){return _id},
             get created(){return _created},
             get blurCount(){return blurCount},
             get activeTime(){return activeTime},
+            get url(){return _url},
+            set url(url){_url=url},
             ping: ping,
-            blur: blur
+            blur: blur,
+            init: init
         }
     }
 
     function init() {
-        var allTabs = opera.extension.tabs.getAll();
-        for(var i=0, tab; tab = allTabs[i]; i++) {
-            var id = tab.id;
-            tabs[id] = new Tab(tab);
+        if(window.localStorage.getItem('tabtimer')) {
+            var data = JSON.parse(window.localStorage.getItem('tabtimer'));
+            console.log(window.localStorage.getItem('tabtimer'));
+            globalStats = data.global;
+
+            var allTabs = opera.extension.tabs.getAll();
+            var oldTabs = data.tabs;
+
+            for(var i=0, tab; tab = allTabs[i]; i++) {
+                for(id in oldTabs) {
+                    var oldtab = oldTabs[id];
+                    if(oldtab.url == tab.url) {
+                        tabs[tab.id] = new Tab(tab);
+                        tabs[tab.id].init(new Date(oldtab.created), oldtab.activeTime, oldtab.blurCount);
+                        delete oldTabs[id];
+                        break;
+                    }
+                }
+                if(!tabs[tab.id]) {
+                    tabs[tab.id] = new Tab(tab);
+                }
+            }
+        }
+        else {
+            var allTabs = opera.extension.tabs.getAll();
+            for(var i=0, tab; tab = allTabs[i]; i++) {
+                var id = tab.id;
+                tabs[id] = new Tab(tab);
+            }
         }
         var tab = opera.extension.tabs.getFocused().id;
         activeTab = tab.id
@@ -337,17 +412,11 @@
 
     function tabFocused(e) {
         var tab = tabs[e.tab.id];
-        activeTab = tab.ud
+        activeTab = tab.id;
     }
 
     function tabClosed(e) {
         delete tabs[e.tab.id];
-    }
-
-    function ping(seconds) {
-        if(activeTab !== null) {
-            tabs[activeTab].ping(seconds);
-        }
     }
 
     function getData() {
@@ -363,11 +432,18 @@
                 activeTime: tabData.activeTime
             });
         }
+        if(globalStats[getToday()] === undefined) {
+            initToday();
+        }
         return {
             tabs: currentTabs,
-            blurCount: globalBlurCount,
-            activeTime: globalActiveTime
+            blurCount: globalStats[getToday()].blur,
+            activeTime: globalStats[getToday()].activeTime
         }
+    }
+
+    function getGlobalStats() {
+        return globalStats;
     }
 
     opera.extension.tabs.onfocus = tabFocused;
@@ -380,15 +456,40 @@
         activeTab = tab.id
     }
     opera.extension.windows.onblur = function(e) {
-        if(activeTab !== null) {
+        if(activeTab !== undefined) {
             tabs[activeTab].blur();
         }
     }
+
+    function save() {
+        var allTabs = opera.extension.tabs.getAll();
+        for(var i=0, tab; tab = allTabs[i]; i++) {
+            if(tabs[tab.id]) {
+                tabs[tab.id].url = tab.url;
+            }
+        }
+        var data = JSON.stringify({
+            tabs: tabs,
+            global: globalStats
+        });
+        window.localStorage.setItem('tabtimer', data);
+    }
+    setInterval(save, 60000);
+
+    function handleMessage(e) {
+        if(e.data == 'cleardata') {
+            window.localStorage.removeItem('tabtimer');
+            globalStats = {};
+            init();
+        }
+    }
+    opera.extension.addEventListener('message', handleMessage, false);
 
     init();
 
     window.TabWatcher = {
         ping: ping,
-        getData: getData
+        getData: getData,
+        getGlobalStats: getGlobalStats
     }
 }());
