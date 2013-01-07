@@ -10,30 +10,31 @@
   </head>
   <body>
     <nav>
-      <div id="close">
+      <div id="wincontrols">
+        <a onclick="showOptions()" href="#">Options</a>
         <a onclick="window.close()" href="#">Close</a>
       </div>
-      <div id="options">
-        <a onclick="showOptions()" href="#">Options</a>
+      <div id="tab-buttons">
+        <a onclick="showDomains()" id="btn-sites" href="#">Sites</a>
+        <a onclick="showTabs()" id="btn-tabs" href="#">Tab focus</a>
       </div>
-      <div id="tab-button" class="domain">
-        <a id="button-link" onclick="showTabs()" href="#">Tabs</a>
-      </div>
+    </nav>
+    <div id="data">
+      <h1>Top sites</h1>
       <div class="navgraph">
         <a id="today" onclick="showToday()" href="#">Today</a>
         <a id="average" onclick="showAverage()" href="#">Average</a>
         <a id="all" onclick="showAllTime()" href="#">All Time</a>
       </div>
-    </nav>
-    <div id="data">
-      <span id="nodata">Start browsing to collect usage data. Check the extension’s privacy settings if no data is recorded.</span>
+      <span id="nodata">Start browsing to collect usage data. Check the extension’s privacy settings; or uninstall, restart, and reinstall if no data is recorded.</span>
       <div id="chart_div"></div>
       <div id="table_div"></div>
     </div>
     <div id="tabs">
-        <h1>Currently open tabs</h1>
+        <h1>Tab focus trends</h1>
         <div id="tabgraph"></div>
-        <p>This session: <span id="time-per-tab"></span> on average spent per tab. Changed tab focus <span id="tab-switches"></span>.</p>
+        <h1>Currently open tabs</h1>
+        <p>Today: <span id="time-per-tab"></span> on average spent per tab. Changed tab focus <span id="tab-switches"></span>.</p>
         <table id="tabtable">
             <thead>
                 <tr>

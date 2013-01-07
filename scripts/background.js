@@ -368,12 +368,17 @@
     }
 
     function init() {
-        if(window.sessionStorage.getItem('tabtimer')) {
-            var data = JSON.parse(window.sessionStorage.getItem('tabtimer'));
-            globalStats = data.global;
+        if(window.localStorage.getItem('tabtimer')) {
+            var sessiondata, persistentdata = JSON.parse(window.localStorage.getItem('tabtimer'));
+            if ( window.sessionStorage.getItem('tabtimer_session') ) {
+               sessiondata = JSON.parse(window.sessionStorage.getItem('tabtimer_session'));
+            }
+            else { sessiondata = {}; }
+
+            globalStats = persistentdata.global;
 
             var allTabs = opera.extension.tabs.getAll();
-            var oldTabs = data.tabs;
+            var oldTabs = sessiondata.tabs;
 
             for(var i=0, tab; tab = allTabs[i]; i++) {
                 for(id in oldTabs) {
@@ -390,7 +395,7 @@
                 }
             }
         }
-        else {
+        else { /* no persistent data */
             var allTabs = opera.extension.tabs.getAll();
             for(var i=0, tab; tab = allTabs[i]; i++) {
                 var id = tab.id;
@@ -467,17 +472,21 @@
                 tabs[tab.id].url = tab.url;
             }
         }
-        var data = JSON.stringify({
-            tabs: tabs,
+        var persistentdata = JSON.stringify({
             global: globalStats
         });
-        window.sessionStorage.setItem('tabtimer', data);
+        window.localStorage.setItem('tabtimer', persistentdata);
+        var sessiondata = JSON.stringify({
+            tabs: tabs,
+        });
+        window.sessionStorage.setItem('tabtimer_session', sessiondata);
     }
     setInterval(recordTabUsage, 60000);
 
     function handleMessage(e) {
         if(e.data == 'cleardata') {
-            window.sessionStorage.removeItem('tabtimer');
+            window.localStorage.removeItem('tabtimer');
+            window.sessionStorage.remove('tabtimer_session');
             globalStats = {};
             init();
         }

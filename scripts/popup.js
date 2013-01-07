@@ -1,13 +1,3 @@
-window.addEventListener('DOMContentLoaded', function()
-{
-  // move buttons to platform native location if different from default
-  if (~navigator.platform.indexOf('Mac'))
-  {
-    document.getElementById('options').style.cssFloat = 'right';
-    document.getElementById('close').style.cssFloat = 'left';
-  }
-}, false);
-
 // Types to view data
 var TYPE = {
   today: "today",
@@ -354,7 +344,7 @@ function drawTabChart() {
       return [date, data[date] ? 
           averageTime(data[date].blur, data[date].activeTime) : 0];
   });
-  data.unshift(["Date", "Avg. Tab Time"]);
+  data.unshift(["Date", "avg. time per tab"]);
 
   // Create the data table.
   var chartData = google.visualization.arrayToDataTable(data);
@@ -364,7 +354,7 @@ function drawTabChart() {
     tooltip: {
       text: 'percentage'
     },
-    title: "Average Tab Time",
+    title: "Average time spent per tab",
     legend: {
         position: 'none'
     },
@@ -379,22 +369,28 @@ function drawTabChart() {
   chart.draw(chartData, options);
 }
 
+function showDomains() {
+    if( document.getElementById('data').style.display == 'none' ) {
+      document.getElementById('tabs').style.display = 'none';
+      document.getElementById('data').style.display = 'block';
+    }
+    document.getElementById('btn-tabs').style.fontWeight = 'normal';
+    document.getElementById('btn-sites').style.fontWeight = 'bold';
+}
+
 function showTabs() {
     drawTabChart();
-    var button = document.getElementById('tab-button');
-    if(button.className !== "domain") {
-        document.getElementById('button-link').textContent = "Tabs";
-        document.getElementById('tabs').style.display = 'none';
-        document.getElementById('data').style.display = 'block';
-        document.querySelector('.navgraph').style.visibility = 'visible';
-        button.className = "domain";
-        return;
+    if( document.getElementById('data').style.display == 'block' ) {
+
+      document.getElementById('tabs').style.display = 'block';
+      document.getElementById('data').style.display = 'none';
     }
-    else {
-        document.getElementById('button-link').textContent = "Domains";
-        button.className = "tabs";
-    }
-    
+    document.getElementById('btn-tabs').style.fontWeight = 'bold';
+    document.getElementById('btn-sites').style.fontWeight = 'normal';
+
+
+
+
     var data = opera.extension.bgProcess.TabWatcher.getData();
     var tableBody = document.getElementById('tablebody');
     tableBody.innerHTML = data.tabs.map(function(tab) {

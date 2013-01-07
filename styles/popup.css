@@ -4,23 +4,33 @@ body {
 }
 nav {
   display:block;
+  height:20px;
+  border-bottom:2px solid black;
 }
-#close {
+#wincontrols {
   float:right;
 }
-#options {
-  float:left;
+#wincontrols a {
+  margin-left:.6em;
 }
+#btn-sites {font-weight:bold;}
+
+nav a:hover {
+color:rgb(14,109,207);
+}
+
+
 .navgraph {
   text-align:center;
+  display:block;
+  margin-top:.5em;
+  height:20px;
+  clear:both;
 }
 a {
   text-decoration:none;
   color:black;
   cursor:pointer;
-}
-#options a, #close a {
-  font-weight:bold;
 }
 #options a:hover {
   text-decoration:underline;
@@ -64,7 +74,7 @@ a {
     width: 100%;
 }
 
-#tabs h1 {
+h1 {
    font-size:1.2em;
    font-weight:bold;
    margin:1em 0 0;
@@ -100,11 +110,6 @@ background: linear-gradient(to bottom, #ffffff 0%,#f9fafd 30%,#eef2f7 60%,#e4e9f
     color:rgb(14,109,207);
 }
 
-#tab-button {
-    margin-left: 1em;
+#tab-buttons a {
+  margin-right:.6em;
 }
-
-#today {
-    font-style: normal !important;
-}
-
