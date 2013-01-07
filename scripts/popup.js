@@ -399,7 +399,6 @@ function showTabs() {
     var tableBody = document.getElementById('tablebody');
     tableBody.innerHTML = data.tabs.map(function(tab) {
         return "<tr><td>" + 
-            ("<img src='" + (tab.favicon || '') + "' />") +
             formatTitle(tab.title) + "</td><td>" + 
             formatCreated(tab.created) + "</td><td>" + 
             tab.blurCount + " time" + (tab.blurCount == 1 ? '' : 's') +  "</td><td>" + 

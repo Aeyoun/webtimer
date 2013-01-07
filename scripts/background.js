@@ -425,7 +425,6 @@
         for(var i=0, tab; tab = allTabs[i]; i++) {
             var tabData = tabs[tab.id];
             currentTabs.push({
-                favicon: tab.faviconUrl,
                 title: tab.title,
                 blurCount: tabData.blurCount,
                 created: tabData.created,
