@@ -368,9 +368,8 @@
     }
 
     function init() {
-        if(window.localStorage.getItem('tabtimer')) {
-            var data = JSON.parse(window.localStorage.getItem('tabtimer'));
-            console.log(window.localStorage.getItem('tabtimer'));
+        if(window.sessionStorage.getItem('tabtimer')) {
+            var data = JSON.parse(window.sessionStorage.getItem('tabtimer'));
             globalStats = data.global;
 
             var allTabs = opera.extension.tabs.getAll();
@@ -461,7 +460,7 @@
         }
     }
 
-    function save() {
+    function recordTabUsage() {
         var allTabs = opera.extension.tabs.getAll();
         for(var i=0, tab; tab = allTabs[i]; i++) {
             if(tabs[tab.id]) {
@@ -472,13 +471,13 @@
             tabs: tabs,
             global: globalStats
         });
-        window.localStorage.setItem('tabtimer', data);
+        window.sessionStorage.setItem('tabtimer', data);
     }
-    setInterval(save, 60000);
+    setInterval(recordTabUsage, 60000);
 
     function handleMessage(e) {
         if(e.data == 'cleardata') {
-            window.localStorage.removeItem('tabtimer');
+            window.sessionStorage.removeItem('tabtimer');
             globalStats = {};
             init();
         }
