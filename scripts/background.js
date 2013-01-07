@@ -300,8 +300,8 @@
     function ping() {
         var window = opera.extension.windows.getLastFocused();
         if(window.focused) {
-            var tab = opera.extension.tabs.getSelected();
-            if(activeTab !== undefined) {
+            var tab = opera.extension.tabs.getFocused();
+            if(tab && tab.url !== undefined && activeTab !== undefined) {
                 tabs[tab.id].ping(1);
             }
         }
@@ -455,7 +455,8 @@
         activeTab = tab.id
     }
     opera.extension.windows.onblur = function(e) {
-        if(activeTab !== undefined) {
+        var tab = opera.extension.tabs.getFocused;
+        if(tab && tab.url !== undefined && activeTab !== undefined) {
             tabs[activeTab].blur();
         }
     }
