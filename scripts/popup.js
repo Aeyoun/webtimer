@@ -296,7 +296,7 @@ function formatAverageTime(blurCount, activeTime) {
     var mins = Math.floor(seconds / 60);
     seconds = Math.floor(seconds - (mins * 60));
     
-    return mins > 0 ? mins + "m, " + seconds + "s" : seconds + "s";
+    return mins > 0 ? mins + " min, " + seconds + " sec." : seconds + " sec.";
 }
 
 function averageTime(blurCount, activeTime) {
@@ -401,12 +401,12 @@ function showTabs() {
         return "<tr><td>" + 
             formatTitle(tab.title) + "</td><td>" + 
             formatCreated(tab.created) + "</td><td>" + 
-            tab.blurCount + " time" + (tab.blurCount == 1 ? '' : 's') +  "</td><td>" + 
+            tab.blurCount + "</td><td>" + 
             formatAverageTime(tab.blurCount, tab.activeTime) + "</td></tr>";
     }).join('');
 
     document.getElementById('time-per-tab').innerHTML = formatAverageTime(data.blurCount, data.activeTime);
-    document.getElementById('tab-switches').innerHTML = data.blurCount;
+    document.getElementById('tab-switches').innerHTML = data.blurCount + " times";
 
     document.getElementById('data').style.display = 'none';
     document.getElementById('tabs').style.display = 'block';

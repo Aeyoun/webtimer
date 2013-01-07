@@ -31,19 +31,16 @@
       <div id="table_div"></div>
     </div>
     <div id="tabs">
-        <div id=tabgraph></div>
+        <h1>Currently open tabs</h1>
+        <div id="tabgraph"></div>
+        <p>This session: <span id="time-per-tab"></span> on average spent per tab. Changed tab focus <span id="tab-switches"></span>.</p>
         <table id="tabtable">
-            <h3>
-                <span id=today>Today:</span>
-                Avg. Tab Time: <span id="time-per-tab"></span>
-                Tab Switches: <span id="tab-switches"></span>
-            </h3>
             <thead>
                 <tr>
                     <th>Title</th>
                     <th>Created</th>
-                    <th>Tab Switches</th>
-                    <th>Avg. Tab Time</th>
+                    <th>Focused</th>
+                    <th>Avg. time</th>
                 </tr>
             </thead>
             <tbody id="tablebody">
