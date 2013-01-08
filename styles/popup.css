@@ -58,20 +58,20 @@ a {
 }
 
 #tabs {
-    display: none;
+  display: none;
 }
 
 #tab-button {
-    float: left;
+  float: left;
 }
 
 #tabs {
 }
 
 #tabtable {
-    border-spacing: 0px;
-    border-collapse:collapse;
-    width: 100%;
+  border-spacing: 0px;
+  border-collapse:collapse;
+  width: 100%;
 }
 
 h1 {
@@ -82,12 +82,12 @@ h1 {
 }
 
 #tabtable tbody {
-    text-align: center;
+  text-align: center;
 }
 #tabtable td, #tabtable th {
-    border: 2px solid rgb(238,238,238);
-    margin: 0px;
-    padding: 2px 4px;
+  border: 2px solid rgb(238,238,238);
+  margin: 0px;
+  padding: 2px 4px;
 }
 
 #tabtable th {
@@ -96,19 +96,19 @@ background: linear-gradient(to bottom, #ffffff 0%,#f9fafd 30%,#eef2f7 60%,#e4e9f
 }
 
 #tabtable th:first-child, #tabtable td:first-child {
-    text-align: left;
+  text-align: left;
 }
 #tabtable td:first-child {
-    max-width: 140px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis ellipsis;
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 
 #tabs span {
-    font-weight:bold;
-    color:rgb(14,109,207);
+  font-weight:bold;
+  color:rgb(14,109,207);
 }
 
 #tab-buttons a {
