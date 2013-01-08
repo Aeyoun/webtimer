@@ -123,6 +123,11 @@ function show(type)
   // Limit chart data
   var limited_data = [],
   chart_limit = parseInt(widget.preferences.getItem('chart_limit'));
+  if (isNaN(chart_limit)) chart_limit = 7;
+  if (chart_limit < 2) chart_limit = 2;
+  if (chart_limit != parseInt(widget.preferences.getItem('chart_limit'))) {
+    widget.preferences.setItem('chart_limit', chart_limit);
+  }
   for (var i = 0; i < chart_limit && i < chart_data.length; i++)
   {
     limited_data.push(chart_data[i]);
