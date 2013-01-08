@@ -41,7 +41,7 @@
   }
 
   // Interval (in seconds) to update timer
-  var UPDATE_INTERVAL = 3,
+  var UPDATE_INTERVAL = 2,
     THRESHOLD = 500;
 
   function isJson(string) {
