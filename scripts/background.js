@@ -123,10 +123,12 @@
   // Check to make sure data is kept for the same day
   function checkDate()
   {
-    var todayStr = new Date().toLocaleDateString();
-    var saved_day = widget.preferences.getItem('date');
-    if (saved_day !== todayStr)
-    {
+    var activedays,
+      num_days = parseInt(widget.preferences.getItem('num_days'));
+      todayStr = new Date().toLocaleDateString(),
+      saved_day = widget.preferences.getItem('date');
+    if (isNaN(num_days)) activedays = 1;
+    if (saved_day !== todayStr) {
       // Reset today’s data and delete empty records
       var domains = JSON.parse(widget.preferences.getItem('domains'));
       for (var domain in domains)
@@ -149,13 +151,18 @@
       widget.preferences.setItem('total', JSON.stringify(total));
       // Combine entries that are not part of top sites as set in THREASHOLD
       combineEntries();
-      // Keep track of number of days web timer has been used
-      widget.preferences.setItem('num_days', parseInt(widget.preferences.getItem('num_days')) + 1);
+
+      // Increase dat count by one
+      activedays = parseInt(widget.preferences.getItem('num_days')) + 1;
+
       // Update date
       widget.preferences.setItem('date', todayStr);
 
       // Reset tab usage
       newTabDay();
+    }
+    if (num_days != activedays && activedays != undefined) {
+      widget.preferences.setItem('num_days', activedays);
     }
   }
   
@@ -291,12 +298,12 @@
   function recordData() {
     if (window === undefined) return;
     if (!userSnoozing) {
+      // Make sure 'today' is up-to-date
+      checkDate();
       var tab = opera.extension.tabs.getFocused();
       if (tab === undefined) return;
       if (tab && tab.url){
         checkCurrentTabURLChange();
-        // Make sure 'today' is up-to-date
-        checkDate();
         if (!inBlacklist(tab.url))
         {
 
