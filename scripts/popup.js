@@ -395,4 +395,10 @@ function showTabs() {
     document.getElementById('data').style.display = 'none';
     document.getElementById('tabs').style.display = 'block';
 
+    widget.preferences.setItem('new-feature-tabusage', 'seen');
+}
+
+// new feature discoverability
+if (widget.preferences.getItem('new-feature-tabusage') != 'seen') {
+  document.styleSheets[0].insertRule('#btn-tabs:after{content:"NEW";color:#A82A33;vertical-align:super;font-size:.6em;}}', 0);
 }
