@@ -13,9 +13,9 @@ nav {
 #wincontrols a {
   margin-left:.6em;
 }
-#btn-sites {font-weight:bold;}
+#btn-sites, .active {font-weight:bold;}
 
-nav a:hover {
+nav a:hover, .navgraph a:hover {
 color:rgb(14,109,207);
 }
 
@@ -36,15 +36,15 @@ a {
   text-decoration:underline;
 }
 .navgraph a { padding:4px 6px; border:1px solid transparent;border-radius:10px;}
-.navgraph a:hover { border:1px dashed #585858; margin:0;}
+
 #data {
   margin-top:10px;
 }
 #table_div {
   margin-top:15px;
 }
-.active, .active:hover {
-  border:1px solid #585858 !important;
+
+.active:hover, nav a:hover {
   cursor:default;
 }
 #nodata {
@@ -99,9 +99,10 @@ background: linear-gradient(to bottom, #ffffff 0%,#f9fafd 30%,#eef2f7 60%,#e4e9f
     text-align: left;
 }
 #tabtable td:first-child {
-    width: 45%;
+    max-width: 140px;
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis ellipsis;
 }
 
 

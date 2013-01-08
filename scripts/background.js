@@ -2,6 +2,9 @@
   var userSnoozing = false,
   userSnoozeTimer,
   currentTabURL,
+  tabcollection={},
+  activeTab,
+  globalStats={},
   toolbarIcon;
   if (~window.navigator.platform.indexOf('Mac')) {
     toolbarIcon = 'ToolbarIcon.png';
@@ -20,26 +23,6 @@
   },
   toolbarButton = opera.contexts.toolbar.createItem(toolbarButtonProperties);
   opera.contexts.toolbar.addItem(toolbarButton);
-
-  (function registerEventListeners()
-  {
-    var tabEvents = ['close', 'create', 'focus', 'blur'],
-    windowEvents  = ['create', 'close', 'focus'];
-    for (var event in tabEvents)
-    {
-      opera.extension.tabs.addEventListener(tabEvents[event], restartUserIdleMonitor, false);
-    }
-    for (var event in windowEvents)
-    {
-      opera.extension.windows.addEventListener(windowEvents[event], restartUserIdleMonitor, false);
-    }
-    opera.extension.addEventListener('message', function(event) {
-      if (event.data == 'userScrolled')
-      {
-        restartUserIdleMonitor();
-      }
-    }, false);
-  }());
 
   function checkCurrentTabURLChange()
   {
@@ -123,7 +106,20 @@
     widget.preferences.setItem('other', JSON.stringify(other));
     widget.preferences.setItem('domains', JSON.stringify(domains));
   }
-  
+
+
+  function getToday() {
+    var now = new Date();
+    return now.getFullYear() +'.'+ now.getMonth() + '.' + now.getDate();
+  }
+
+  function newTabDay() {
+    globalStats[getToday()] = {
+      blur: 0,
+      activeTime: 0
+    }
+  }
+
   // Check to make sure data is kept for the same day
   function checkDate()
   {
@@ -157,6 +153,9 @@
       widget.preferences.setItem('num_days', parseInt(widget.preferences.getItem('num_days')) + 1);
       // Update date
       widget.preferences.setItem('date', todayStr);
+
+      // Reset tab usage
+      newTabDay();
     }
   }
   
@@ -187,6 +186,45 @@
     return false;
   }
 
+  function Tab(tab) {
+    var _id = tab.id, _url, _created = new Date(), activeTime = 0, blurCount = 0;
+
+    function toString() {
+      return {
+        id: _id,
+        url: _url,
+        created: _created,
+        activeTime: activeTime,
+        blurCount: blurCount
+      }
+    }
+
+    function init(created, active, blur) {
+      _created = created;
+      activeTime = active;
+      blurCount = blur;
+    }
+
+    function blur() {
+      blurCount++;
+
+      if(globalStats[getToday()] === undefined) {
+        newTabDay();
+      }
+      globalStats[getToday()].blur++;
+    }
+    return {
+      get id(){return _id},
+      get created(){return _created},
+      get blurCount(){return blurCount},
+      activeTime: activeTime,
+      get url(){return _url},
+      set url(url){_url=url},
+      blur: blur,
+      init: init
+    }
+  }
+
   // Read in domain from Storage as JSON or (re)create
   function readDomainData(domain) {
     if (isJson(widget.preferences.getItem(domain))) {
@@ -198,27 +236,72 @@
       };
   }}
 
-  // Update the data
-  function recordData()
-  {
-    if (opera.extension.tabs.getFocused() && opera.extension.tabs.getFocused().url)
-    {
-      if (window === undefined) {
-        return;
+  function init() {
+    if(widget.preferences.getItem('tabtimer')) {
+      var sessiondata, persistentdata;
+      if ( widget.preferences.getItem('tabtimer') ) {
+        persistentdata = JSON.parse(widget.preferences.getItem('tabtimer'));
       }
-      checkCurrentTabURLChange();
-      if (!userSnoozing)
-      {
-        var tab = opera.extension.tabs.getFocused();
-        if (tab === undefined) {
-          return;
+      else { persistentdata = {}; }
+
+      globalStats = persistentdata.global;
+
+      var allTabs = opera.extension.tabs.getAll();
+
+      for(var i=0, tab; tab = allTabs[i]; i++) {
+        if(!tabcollection[tab.id]) {
+          tabcollection[tab.id] = new Tab(tab);
         }
+      }
+    }
+    else { /* no persistent data */
+      var allTabs = opera.extension.tabs.getAll();
+      for(var i=0, tab; tab = allTabs[i]; i++) {
+        var id = tab.id;
+        tabcollection[id] = new Tab(tab);
+      }
+    }
+    var tab = opera.extension.tabs.getFocused().id;
+    activeTab = tab.id
+  }
+
+    function getData() {
+        var currentTabs = [];
+        var allTabs = opera.extension.tabs.getAll();
+        for(var i=0, tab; tab = allTabs[i]; i++) {
+            var tabData = tabcollection[tab.id];
+            currentTabs.push({
+                title: tab.title,
+                blurCount: tabData.blurCount,
+                created: tabData.created,
+                activeTime: tabData.activeTime
+            });
+        }
+        if(globalStats[getToday()] === undefined) {
+            newTabDay();
+        }
+        return {
+            tabs: currentTabs,
+            blurCount: globalStats[getToday()].blur,
+            activeTime: globalStats[getToday()].activeTime
+        }
+    }
+
+  // Update the data
+  function recordData() {
+    if (window === undefined) return;
+    if (!userSnoozing) {
+      var tab = opera.extension.tabs.getFocused();
+      if (tab === undefined) return;
+      if (tab && tab.url){
+        checkCurrentTabURLChange();
         // Make sure 'today' is up-to-date
         checkDate();
         if (!inBlacklist(tab.url))
         {
-          var domain = extractDomain(tab.url),
-            domains = widget.preferences.getItem('domains');
+
+          // Record domain popularity
+          var domain = extractDomain(tab.url), domains = widget.preferences.getItem('domains');
           if (!isJson(domains)) {
             rebuildDomainsList()
             return false
@@ -244,16 +327,119 @@
           widget.preferences.setItem('total', JSON.stringify(total));
         }
       }
+
+      // Record tab usage – not URL dependant
+      if(!tabcollection) tabcollection = {};
+      if(!tabcollection[tab.id]) tabcollection[tab.id] = new Tab(tab);
+      if(tabcollection[tab.id].blurCount < 1) tabcollection[tab.id].blur();
+      tabcollection[tab.id].activeTime += UPDATE_INTERVAL;
+      
+      if(globalStats[getToday()] === undefined) newTabDay();
+      globalStats[getToday()].activeTime += UPDATE_INTERVAL;
+
+      var allTabs = opera.extension.tabs.getAll();
+      for(var i=0, tabfocus; tabfocus = allTabs[i]; i++) {
+        if(tabcollection[tabfocus.id]) tabcollection[tabfocus.id].url = tabfocus.url;
+      }
+      var persistentdata = JSON.stringify({ global: globalStats });
+      widget.preferences.setItem('tabtimer', persistentdata);
+      var sessiondata = JSON.stringify({ tabs: tabcollection });
+      window.sessionStorage.setItem('tabtimer_session', sessiondata);
     }
   }
-  // Update timer data every UPDATE_INTERVAL seconds
-  setInterval(recordData, UPDATE_INTERVAL * 1000);
+
+  function mailMan(e) {
+    if (e.data == 'userScrolled') {
+      restartUserIdleMonitor();
+    }
+    else if(e.data == 'cleardata') {
+      var domains = JSON.parse(widget.preferences.getItem('domains')),
+      other = JSON.parse(widget.preferences.getItem('other'));
+      for (var domain in domains) {
+        widget.preferences.removeItem(domain);
+        delete domains[domain];
+      }
+      widget.preferences.setItem('domains', '{}');
+      widget.preferences.setItem('total', '{"today":0,"all":0}');
+      widget.preferences.setItem('other', '{"today":0,"all":0}');
+      widget.preferences.setItem('num_days', '1');
+      widget.preferences.setItem('date', new Date().toLocaleDateString())
+      widget.preferences.removeItem('tabtimer');
+      window.sessionStorage.remove('tabtimer_session');
+      globalStats = {};
+      init();
+    }
+  }
+
+  init();
+
+  (function registerEventListeners() {
+    opera.extension.tabs.addEventListener('close', function(event) {
+      delete tabcollection[event.tab.id];
+
+      restartUserIdleMonitor();
+    }, false);
+
+    opera.extension.tabs.addEventListener('create', function(event) {
+      tabcollection[event.tab.id] = new Tab(event.tab);
+      if (event.tab.id && event.tab.focused) {
+        activeTab = event.tab.id;
+        tabcollection[event.tab.id].blur();
+      }
+
+      restartUserIdleMonitor();
+    }, false);
+
+    opera.extension.tabs.addEventListener('focus', function(event) {
+      if (event.tab.id) activeTab = event.tab.id;
+
+      restartUserIdleMonitor();
+    }, false);
+
+    opera.extension.tabs.addEventListener('blur', function(event) {
+      tabcollection[event.tab.id].blur();
+
+      restartUserIdleMonitor();
+    }, false);
+
+    opera.extension.windows.addEventListener('close', function(event) {
+      restartUserIdleMonitor();
+    }, false);
+
+    opera.extension.windows.addEventListener('create', function(event) {
+      restartUserIdleMonitor();
+    }, false);
+
+    opera.extension.windows.addEventListener('focus', function(event) {
+      if (event.tab && event.tab.id) activeTab = event.tab.id;
+
+      restartUserIdleMonitor();
+    }, false);
+
+    opera.extension.windows.addEventListener('blur', function(e) {
+      var tab = opera.extension.tabs.getFocused;
+      if(tab && tab.url !== undefined && activeTab !== undefined) {
+        tabcollection[activeTab].blur();
+      }
+    }, false);
+
+    opera.extension.addEventListener('message', mailMan, false);
+
+  }());
+
+  window.TabWatcher = {
+    getData: getData,
+    globalStats: function() { return globalStats; }
+  }
 
   window.openOptionsTab = function () {
     opera.extension.tabs.create( {
       url: 'options.html', focused: true
      } );
   }
+
+  // Update timer data every UPDATE_INTERVAL seconds
+  setInterval(recordData, UPDATE_INTERVAL * 1000);
 
   window.rebuildDomainsList = function () {
     var storage_length = widget.preferences.length,
@@ -284,220 +470,5 @@
     // Recreate data
     widget.preferences.setItem('domains', JSON.stringify(domains_list))
     widget.preferences.setItem('total', JSON.stringify(total_times))
+
 }}());
-
-(function() 
-{
-    var tabs = {};
-    var activeTab;
-    var globalStats = {};
-
-    function getToday() {
-        var now = new Date();
-        return now.getFullYear() +'.'+ now.getMonth() + '.' + now.getDate();
-    }
-
-    function ping() {
-        var window = opera.extension.windows.getLastFocused();
-        if(window.focused) {
-            var tab = opera.extension.tabs.getFocused();
-            if(tab && tab.url !== undefined && activeTab !== undefined) {
-                tabs[tab.id].ping(1);
-            }
-        }
-    }
-    setInterval(ping, 1000);
-
-    function initToday() {
-        globalStats[getToday()] = {
-            blur: 0,
-            activeTime: 0
-        }
-    }
-
-    function Tab(tab) {
-        var _id = tab.id;
-        var _url;
-        var _created = new Date();
-        var activeTime = 0;
-        var blurCount = 0;
-
-        function toString() {
-            return {
-                id: _id,
-                url: _url,
-                created: _created,
-                activeTime: activeTime,
-                blurCount: blurCount
-            }
-        }
-
-        function init(created, active, blur) {
-            _created = created;
-            activeTime = active;
-            blurCount = blur;
-        }
-
-        function blur() {
-            blurCount++;
-
-            if(globalStats[getToday()] === undefined) {
-                initToday();
-            }
-            globalStats[getToday()].blur++;
-        }
-
-        function ping(time) {
-            activeTime += time;
-            if(globalStats[getToday()] === undefined) {
-                initToday();
-            }
-            globalStats[getToday()].activeTime += time;
-        }
-        return {
-            get id(){return _id},
-            get created(){return _created},
-            get blurCount(){return blurCount},
-            get activeTime(){return activeTime},
-            get url(){return _url},
-            set url(url){_url=url},
-            ping: ping,
-            blur: blur,
-            init: init
-        }
-    }
-
-    function init() {
-        if(window.localStorage.getItem('tabtimer')) {
-            var sessiondata, persistentdata = JSON.parse(window.localStorage.getItem('tabtimer'));
-            if ( window.sessionStorage.getItem('tabtimer_session') ) {
-               sessiondata = JSON.parse(window.sessionStorage.getItem('tabtimer_session'));
-            }
-            else { sessiondata = {}; }
-
-            globalStats = persistentdata.global;
-
-            var allTabs = opera.extension.tabs.getAll();
-            var oldTabs = sessiondata.tabs;
-
-            for(var i=0, tab; tab = allTabs[i]; i++) {
-                for(id in oldTabs) {
-                    var oldtab = oldTabs[id];
-                    if(oldtab.url == tab.url) {
-                        tabs[tab.id] = new Tab(tab);
-                        tabs[tab.id].init(new Date(oldtab.created), oldtab.activeTime, oldtab.blurCount);
-                        delete oldTabs[id];
-                        break;
-                    }
-                }
-                if(!tabs[tab.id]) {
-                    tabs[tab.id] = new Tab(tab);
-                }
-            }
-        }
-        else { /* no persistent data */
-            var allTabs = opera.extension.tabs.getAll();
-            for(var i=0, tab; tab = allTabs[i]; i++) {
-                var id = tab.id;
-                tabs[id] = new Tab(tab);
-            }
-        }
-        var tab = opera.extension.tabs.getFocused().id;
-        activeTab = tab.id
-    }
-
-    function tabCreated(e) {
-        tabs[e.tab.id] = new Tab(e.tab);
-    }
-
-    function tabBlurred(e) {
-        tabs[e.tab.id].blur();
-    }
-
-    function tabFocused(e) {
-        var tab = tabs[e.tab.id];
-        activeTab = tab.id;
-    }
-
-    function tabClosed(e) {
-        delete tabs[e.tab.id];
-    }
-
-    function getData() {
-        var currentTabs = [];
-        var allTabs = opera.extension.tabs.getAll();
-        for(var i=0, tab; tab = allTabs[i]; i++) {
-            var tabData = tabs[tab.id];
-            currentTabs.push({
-                title: tab.title,
-                blurCount: tabData.blurCount,
-                created: tabData.created,
-                activeTime: tabData.activeTime
-            });
-        }
-        if(globalStats[getToday()] === undefined) {
-            initToday();
-        }
-        return {
-            tabs: currentTabs,
-            blurCount: globalStats[getToday()].blur,
-            activeTime: globalStats[getToday()].activeTime
-        }
-    }
-
-    function getGlobalStats() {
-        return globalStats;
-    }
-
-    opera.extension.tabs.onfocus = tabFocused;
-    opera.extension.tabs.onblur = tabBlurred;
-    opera.extension.tabs.oncreate = tabCreated;
-    opera.extension.tabs.onclose = tabClosed;
-
-    opera.extension.windows.onfocus = function(e) {
-        var tab = e.target.getFocused().tabs.getFocused();
-        activeTab = tab.id
-    }
-    opera.extension.windows.onblur = function(e) {
-        var tab = opera.extension.tabs.getFocused;
-        if(tab && tab.url !== undefined && activeTab !== undefined) {
-            tabs[activeTab].blur();
-        }
-    }
-
-    function recordTabUsage() {
-        var allTabs = opera.extension.tabs.getAll();
-        for(var i=0, tab; tab = allTabs[i]; i++) {
-            if(tabs[tab.id]) {
-                tabs[tab.id].url = tab.url;
-            }
-        }
-        var persistentdata = JSON.stringify({
-            global: globalStats
-        });
-        window.localStorage.setItem('tabtimer', persistentdata);
-        var sessiondata = JSON.stringify({
-            tabs: tabs,
-        });
-        window.sessionStorage.setItem('tabtimer_session', sessiondata);
-    }
-    setInterval(recordTabUsage, 60000);
-
-    function handleMessage(e) {
-        if(e.data == 'cleardata') {
-            window.localStorage.removeItem('tabtimer');
-            window.sessionStorage.remove('tabtimer_session');
-            globalStats = {};
-            init();
-        }
-    }
-    opera.extension.addEventListener('message', handleMessage, false);
-
-    init();
-
-    window.TabWatcher = {
-        ping: ping,
-        getData: getData,
-        getGlobalStats: getGlobalStats
-    }
-}());

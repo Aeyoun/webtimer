@@ -79,17 +79,5 @@ function restore_options()
 // Clear all data except for blacklist
 function clearData()
 {
-  var domains = JSON.parse(widget.preferences.getItem('domains')),
-  other = JSON.parse(widget.preferences.getItem('other'));
-  for (var domain in domains)
-  {
-    widget.preferences.removeItem(domain);
-    delete domains[domain];
-  }
-  widget.preferences.setItem('domains', '{}');
-  widget.preferences.setItem('total', '{"today":0,"all":0}');
-  widget.preferences.setItem('other', '{"today":0,"all":0}');
-  widget.preferences.setItem('num_days', '1');
-  widget.preferences.setItem('date', new Date().toLocaleDateString())
   opera.extension.postMessage('cleardata');
 }

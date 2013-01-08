@@ -22,7 +22,7 @@ function timeString(numSeconds)
 {
   if (numSeconds === 0)
   {
-    return "0 seconds";
+    return "0 sec.";
   }
   var remainder = numSeconds,
   timeStr = "",
@@ -281,12 +281,12 @@ function drawTable(table_data, type)
 }
 
 function formatAverageTime(blurCount, activeTime) {
-    if(activeTime == 0) return 0;
-    var seconds = blurCount == 0 ? activeTime : activeTime / blurCount;
+    if(activeTime == 0) return "unopened";
+    var seconds = (blurCount == 0) ? (activeTime) : (activeTime / blurCount);
     var mins = Math.floor(seconds / 60);
     seconds = Math.floor(seconds - (mins * 60));
     
-    return mins > 0 ? mins + " min, " + seconds + " sec." : seconds + " sec.";
+    return (mins > 0) ? (mins + ":" + seconds + " min.") : (seconds + " sec.");
 }
 
 function averageTime(blurCount, activeTime) {
@@ -317,15 +317,6 @@ function formatCreated(date) {
     return '<time datetime="' + date.toISOString() + '">' + text + '</time>';
 }
 
-function formatTitle(title) {
-    if(title.length > 15) {
-        return title.slice(0,15) + "…";
-    }
-    else {
-        return title;
-    }
-}
-
 function createDateList() {
     var dates = [];
     for(var i=0; i < 7; i++) {
@@ -337,7 +328,7 @@ function createDateList() {
 }
 
 function drawTabChart() {
-  var data = opera.extension.bgProcess.TabWatcher.getGlobalStats();
+  var data = opera.extension.bgProcess.TabWatcher.globalStats();
   var dates = createDateList();
 
   data = dates.map(function(date) {
@@ -351,16 +342,13 @@ function drawTabChart() {
 
   // Set chart options
   var options = {
-    tooltip: {
-      text: 'percentage'
-    },
-    title: "Average time spent per tab",
+    title: "Seconds spent per tab per day",
     legend: {
         position: 'none'
     },
     chartArea: {
       width: 325,
-      height: 180
+      height: 185
     }
   };
 
@@ -395,7 +383,7 @@ function showTabs() {
     var tableBody = document.getElementById('tablebody');
     tableBody.innerHTML = data.tabs.map(function(tab) {
         return "<tr><td>" + 
-            formatTitle(tab.title) + "</td><td>" + 
+            tab.title + "</td><td>" + 
             formatCreated(tab.created) + "</td><td>" + 
             tab.blurCount + "</td><td>" + 
             formatAverageTime(tab.blurCount, tab.activeTime) + "</td></tr>";
@@ -406,5 +394,5 @@ function showTabs() {
 
     document.getElementById('data').style.display = 'none';
     document.getElementById('tabs').style.display = 'block';
-    document.querySelector('.navgraph').style.visibility = "hidden";
+
 }
