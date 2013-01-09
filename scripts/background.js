@@ -174,21 +174,21 @@
     return url.match(re)[2];
   }
   
-  function inBlacklist(url)
-  {
-    if (!url.match(/^http/))
-    {
-      return true;
+  function inBlacklist(url) {
+    /* every address that doesnot start with http or https is blacklisted */
+    if (!url.match(/^http/)) return true;
+
+    var blacklist = widget.preferences.getItem('blacklist');
+    if (!isJson(blacklist)) {
+      /* reset to default if there is something wrong */
+      blacklist = '["example.com"]';
+      widget.preferences.setItem('blacklist', blacklist);
     }
-    var blacklist = JSON.parse(widget.preferences.getItem('blacklist'));
     if(blacklist) {
-        for (var i = 0; i < blacklist.length; i++)
-        {
-          if (url.match(blacklist[i]))
-          {
-            return true;
-          }
-        }
+      blacklist = JSON.parse(blacklist);
+      for (var i = 0; i < blacklist.length; i++){
+        if (url.match(blacklist[i])) return true;
+      }
     }
     return false;
   }
