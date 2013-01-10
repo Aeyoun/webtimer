@@ -13,7 +13,10 @@ nav {
 #wincontrols a {
   margin-left:.6em;
 }
-#btn-sites, .active {font-weight:bold;}
+
+a[aria-pressed="true"]  {font-weight:bold}
+a[aria-pressed="false"] {font-weight:normal}
+
 
 nav a:hover, .navgraph a:hover {
 color:rgb(14,109,207);

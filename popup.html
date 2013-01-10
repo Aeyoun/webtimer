@@ -4,27 +4,24 @@
     <meta charset="UTF-8" />
     <title>Web Timer pop-out</title>
     <link rel="stylesheet" href="styles/popup.css" />
-    <!--Load the AJAX API-->
-    <script src="https://www.google.com/jsapi"></script>
-    <script src="scripts/popup.js"></script>
   </head>
   <body>
     <nav>
       <div id="wincontrols">
-        <a onclick="showOptions()" href="#">Options</a>
-        <a onclick="window.close()" href="#">Close</a>
+        <a role="button" onclick="showOptions()" href="#">Options</a>
+        <a role="button" onclick="window.close()" href="#">Close</a>
       </div>
       <div id="tab-buttons">
-        <a onclick="showDomains()" id="btn-sites" href="#">Sites</a>
-        <a onclick="showTabs()" id="btn-tabs" href="#">Tab focus</a>
+        <a role="button" onclick="showDomains()" id="btn-sites" href="#">Sites</a>
+        <a role="button" onclick="showTabs()" id="btn-tabs" href="#">Tab focus</a>
       </div>
     </nav>
     <div id="data">
       <h1>Top sites</h1>
       <div class="navgraph">
-        <a id="today" onclick="showToday()" href="#">Today</a>
-        <a id="average" onclick="showAverage()" href="#">Average</a>
-        <a id="all" onclick="showAllTime()" href="#">All Time</a>
+        <a role="button" id="today" onclick="showToday()" href="#">Today</a>
+        <a role="button" id="average" onclick="showAverage()" href="#">Average</a>
+        <a role="button" id="all" onclick="showAllTime()" href="#">All Time</a>
       </div>
       <span id="nodata">Start browsing to collect usage data. If no data is recorded: try opening the Options page and reloading. Also check the extension’s privacy settings from the Extension Manager. Lastly uninstall, restart the browser, and reinstall.</span>
       <div id="chart_div"></div>
@@ -48,5 +45,8 @@
         </tbody>
       </table>
     </div>
+    <!--Load the AJAX API-->
+    <script src="https://www.google.com/jsapi"></script>
+    <script src="scripts/popup.js"></script>
   </body>
 </html>
