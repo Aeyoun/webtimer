@@ -199,10 +199,14 @@ function show(type)
 
 function updateNav(type)
 {
-  document.getElementById('today').className = '';
-  document.getElementById('average').className = '';
-  document.getElementById('all').className = '';
-  document.getElementById(type).className = 'active';
+  document.getElementById('today').setAttribute('aria-expanded','false');
+  document.getElementById('today').setAttribute('aria-pressed','false');
+  document.getElementById('average').setAttribute('aria-expanded','false');
+  document.getElementById('average').setAttribute('aria-pressed','false');
+  document.getElementById('all').setAttribute('aria-expanded','false');
+  document.getElementById('all').setAttribute('aria-pressed','false');
+  document.getElementById(type).setAttribute('aria-expanded','true');
+  document.getElementById(type).setAttribute('aria-pressed','true');
 }
 
 function showToday()
@@ -363,26 +367,24 @@ function drawTabChart() {
 }
 
 function showDomains() {
-    if( document.getElementById('data').style.display == 'none' ) {
-      document.getElementById('tabs').style.display = 'none';
-      document.getElementById('data').style.display = 'block';
-    }
-    document.getElementById('btn-tabs').style.fontWeight = 'normal';
-    document.getElementById('btn-sites').style.fontWeight = 'bold';
+    document.getElementById('tabs').style.display = 'none';
+    document.getElementById('data').style.display = 'block';
+    document.getElementById('btn-tabs').setAttribute('aria-expanded','false');
+    document.getElementById('btn-tabs').setAttribute('aria-pressed','false');
+    document.getElementById('btn-sites').setAttribute('aria-expanded','true');
+    document.getElementById('btn-sites').setAttribute('aria-pressed','true');
 }
 
 function showTabs() {
+    document.getElementById('tabs').style.display = 'block';
+    document.getElementById('data').style.display = 'none';
+    document.getElementById('btn-tabs').setAttribute('aria-expanded','true');
+    document.getElementById('btn-tabs').setAttribute('aria-pressed','true');
+    document.getElementById('btn-sites').setAttribute('aria-expanded','false');
+    document.getElementById('btn-sites').setAttribute('aria-pressed','false');
+
+
     drawTabChart();
-    if( document.getElementById('data').style.display == 'block' ) {
-
-      document.getElementById('tabs').style.display = 'block';
-      document.getElementById('data').style.display = 'none';
-    }
-    document.getElementById('btn-tabs').style.fontWeight = 'bold';
-    document.getElementById('btn-sites').style.fontWeight = 'normal';
-
-
-
 
     var data = opera.extension.bgProcess.TabWatcher.getData();
     var tableBody = document.getElementById('tablebody');
@@ -397,11 +399,10 @@ function showTabs() {
     document.getElementById('time-per-tab').innerHTML = formatAverageTime(data.blurCount, data.activeTime);
     document.getElementById('tab-switches').innerHTML = data.blurCount + " times";
 
-    document.getElementById('data').style.display = 'none';
-    document.getElementById('tabs').style.display = 'block';
-
     widget.preferences.setItem('new-feature-tabusage', 'seen');
 }
+
+window.addEventListener('DOMContentLoaded', showDomains(), false);
 
 // new feature discoverability
 if (widget.preferences.getItem('new-feature-tabusage') != 'seen') {
